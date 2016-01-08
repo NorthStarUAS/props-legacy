@@ -87,30 +87,29 @@ ap.target_heading = heading
 
 Did you see what happened there?  We first grabbed the shared gps
 node, but we also grabbed the shared target waypoint node, and we
-grabbed the autopilot settings node.
-
-We quickly computed the heading from our current location to our
-target waypoint and we wrote that back into the autopilot
-configuration node.
+grabbed the autopilot settings node.  We quickly computed the heading
+from our current location to our target waypoint and we wrote that
+back into the autopilot configuration node.
 
 This approach to sharing data between program modules is a bit unique.
-But consider the alternatives: many applications grow the intermodule
-communication ad-hoc as the code evolves and the interfaces are often
-inconsistant as real world data gets incrementally shoved into
-existing C++ class api's.  The result of the ideological approach is
-often messy and clunky.
+But consider the alternatives: many applications grow their
+inter-module communication ad-hoc as the code evolves and some of the
+interfaces can become inconsistant or awkward as real world data gets
+incrementally shoved into existing C++ class api's.  The result of the
+ideological approach is often messy and clunky.
 
-The property system provides an alternative for shared data that is
-simple, easy to understand, and just works.  It is a different
-philosophy of programming, but the benefits and convenience of the
-property system quickly becomes a way of life.
+The property system provides an alternative for intra-application data
+sharing that is simple, easy to understand, and just works.  It is a
+different philosophy of programming from what many people are used to,
+but the benefits and convenience of the property system quickly
+becomes a way of life.
 
 ### Initialization order.
 
 Please notice that both the reader and writer modules in the above
-example called getNode() with the create flag set to true.  This
-allows initialization order independence.  No matter which module is
-called first, the tree is created properly.
+example call getNode() with the create flag set to true.  This allows
+initialization order independence.  No matter which module is called
+first, the tree is created properly.
 
 ### Direct access to properties
 
@@ -124,14 +123,74 @@ has been created and populated:
 lat = props.sensors.gps.lat
 ```
 
-## Sharing data between modules
-
 ## Sharing data between mixed C++ and Python applications
 
-## Script feature for C++
+A C++ interface to the python property tree is being developed in
+parallel.  For now, know that it exists and brings to C++ most of the
+benefits of the property tree.  (And also enables data sharing between
+applications that are a mix of C++ and Python.)
+
+## Script features for C++
+
+For the C++ developer: incorporating the Property Tree into your
+application brings several conveniences of scripting languages to your
+application.  One big convenience is automatic type conversion.  For
+example, an application can write a string value into a field of the
+property tree, but read it back out as a double.  Watch carefully:
+
+```
+#include "pyprops.hxx"
+int main(int argc, char **argv) {
+    // cleanup the python interpreter after all the main() and global
+    // destructors are called
+    atexit(pyPropsCleanup);
+    
+    pyPropsInit(argc, argv);
+
+    pyPropertyNode gps_node = pyGetNode("/sensors/gps");
+
+    gps_node.setString("lat", "-45.235");
+    double lat = gps_node.getDouble("lat");
+```
+
+Did you see how the value of "lat" is written as a string constant,
+but can be read back out as a double?  Often it is easy to keep your
+types consistent, but it's nice to just let the backend system convert
+types for you as needed.
+ 
+### Performance considerations
+
+Convenience comes at a cost.  The property tree has been designed in a
+way to leverage existing native python structures so it is relatively
+thin and fast, but within python scripts, saving a variable as a class
+member does have more overhead that a standalone variable.  Within
+C++, accessing property nodes and values requires a call layer into
+python structures.  Thus reading and writing properties does involve
+some additional overhead compared to using native variables.
+
+The best recommendation is to place all calls to `getNode()` within a
+modules initialization routine, cache the pointer that is returned,
+and then use this pointer exclusively in the module's update routines.
+
+This way the expensive getNode() function is only called during
+intialization, and the faster class.field notation (Python) or get*()
+set*() routines (C++) are called during runtime.
 
 ## Easy I/O for reading and writing configuration files
 
-## Best practices
+The hierarchical structure of the property tree maps nicely to xml and
+json. (Todo: expand this section.)
 
 ## A note on threaded applications
+
+The Property Tree system is *not* thread safe.  I am pondering some
+ideas to make a thread safe version of the property tree, but this
+will add restrictions to the api and overhead for resource locking.
+Hopefully I will add more on this later.
+
+For now, if you include threads in your application, know that either
+the property tree should be confined exclusively to one thread, or you
+will need to take extra precautions within your own application to
+ensure two threads do not try to read or write the property tree
+simultaneously.  Doing so could lead to seaming random and difficult
+to debug program crashes.
