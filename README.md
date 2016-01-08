@@ -40,8 +40,8 @@ it's essentials, simplified, and rewritten entirely in python.
 
 The word "System" is carefully chosen.  The Property System is an
 interwoven network of concepts that can bring huge value to your
-application.  It's the the right choice for every application, but for
-in the right context it is super awesome.
+application.  It may not be the right choice for every application,
+but for in the right context it is super awesome.
 
 * It provides structured data sharing between modules within your
   application.  (I.e. when your app needs global data shared, don't
