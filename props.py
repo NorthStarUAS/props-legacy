@@ -26,10 +26,7 @@ Notes:
 
 """
 
-import os.path
 import re
-import sys
-import xml.etree.ElementTree as ET
 
 class PropertyNode:
     def getChild(self, path, create=False):
@@ -116,35 +113,3 @@ def getNode(path, create=False):
         return root
     print "getchild on", path[1:], "relative to root"
     return root.getChild(path[1:], create)
-
-# internal xml tree parsing routine
-def _parseXML(pynode, xmlnode, basepath):
-    if len(xmlnode):
-        # has children
-        pynode.__dict__[xmlnode.tag] = PropertyNode()
-        for child in xmlnode:
-            _parseXML(pynode.__dict__[xmlnode.tag], child, basepath)
-    else:
-        if 'include' in xmlnode.attrib:
-            pynode.__dict__[xmlnode.tag] = PropertyNode()
-            filename = basepath + '/' + xmlnode.attrib['include']
-            readXML(filename, pynode.__dict__[xmlnode.tag])
-        else:
-            # leaf
-            pynode.__dict__[xmlnode.tag] = xmlnode.text
-        
-# load xml file and create a property tree rooted at the given node
-# supports <mytag include="relative_file_path.xml" />
-def readXML(filename, pynode):
-    try:
-        xml = ET.parse(filename)
-    except:
-        print filename + ": xml parse error:\n" + str(sys.exc_info()[1])
-        return
-
-    path = os.path.dirname(filename)
-    print "path:", path
-    xmlroot = xml.getroot()
-    for child in xmlroot:
-        _parseXML(pynode, child, path)
-    root.pretty_print()

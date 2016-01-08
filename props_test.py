@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-from props import root, getNode, readXML
+from props import root, getNode
+import props_xml
 
 # run the system through it's paces
 
@@ -45,5 +46,5 @@ print "alt_m:", root.sensors.gps[5].alt_m
 
 config = getNode('/', create=True)
 file = '/home/curt/Projects/UAS/aura-data/config/main-skywalker_01.xml'
-readXML(file, config)
+props_xml.load(file, config)
 
