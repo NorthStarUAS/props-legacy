@@ -1,3 +1,5 @@
+# TODO: properly handle enumerated nodes
+
 import os.path
 import sys
 import xml.etree.ElementTree as ET

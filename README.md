@@ -28,7 +28,43 @@ application in a friendly and well structured way.  With aura-props as
 the backbone of your application, you receive many additional nice
 services and structures.
 
-## The "Property Tree"
+The original idea for the 'Property System' probably dates back to
+long ago, but the first implementation that I am aware of grew up
+within the FlightGear ecosystem.  It has proved to be so convenient
+and nice that I have used it in several other large projects.
+
+Now, here, I have re-imagined the property system, stripped down to
+it's essentials, simplified, and rewritten entirely in python.
+
+## The Property System
+
+The word "System" is carefully chosen.  The Property System is an
+interwoven network of concepts that can bring huge value to your
+application.  It's the the right choice for every application, but for
+in the right context it is super awesome.
+
+* It provides structured data sharing between modules within your
+  application.  (I.e. when your app needs global data shared, don't
+  hack it and hide it, embrace it with a real structure that avoids
+  the bad side of global variables.)
+  
+* It provides a way to organize the important data structures within
+  your application (the property tree.)
+
+* The new python implementation now enables rich data sharing between
+  C++ and Python without forcing the C++ coder to wade through an
+  obtuse Python C++ API.
+
+* The property tree maps well to xml files enabling sophisticated
+  configuration file support with a few easy function calls.
+
+* The property tree can be exposed to external interfaces (i.e. via a
+  network socket) to enable allowed external programs to conveniently
+  access and even change items in the property tree.  This can be
+  useful for debugging or for simple (low bandwidth) interaction
+  between separate applications.
+
+## The Property Tree
 
 The aura-props module enables an application to easily build a tree of
 important data to be shared throughout the program.  There is a single
@@ -41,7 +77,7 @@ navigate.
 A hierarchical tree structure is easy to understand, easy to organize,
 easy to use, and keeps like data near each other.
 
-### The writer module
+### Example: writer module
 
 The gps driver module could include the following (python) code:
 
@@ -70,7 +106,7 @@ this module needs.
 A pyPropertyNode is really just an open ended python class, so we can
 then assign values to any attributes we wish to create.
 
-### The reader module
+### Example: reader module
 
 The navigation module needs the gps information from the property tree
 and do something with it.  The code starts out very similar, but watch
@@ -104,14 +140,18 @@ different philosophy of programming from what many people are used to,
 but the benefits and convenience of the property system quickly
 becomes a way of life.
 
-### Initialization order.
+### Module initialization order.
 
 Please notice that both the reader and writer modules in the above
-example call getNode() with the create flag set to true.  This allows
-initialization order independence.  No matter which module is called
-first, the tree is created properly.
+example call getNode() with the create flag set to true.  The property
+tree system allows initialization order independence among modules.
+With respect to the property tree (ignoring other higher level
+application specific dependencies) the modules can be initialized in
+any order.  The first module to initialize and request the specific
+property nodes will trigger their creation, and subsequent modules
+will find the nodes already there.
 
-### Direct access to properties
+### Direct access to properties (Python)
 
 The property tree is constructed out of a thin python shell class.
 Once the appropriate portions of the property tree are created and
@@ -123,14 +163,14 @@ has been created and populated:
 lat = props.sensors.gps.lat
 ```
 
-## Sharing data between mixed C++ and Python applications
+### Sharing data between mixed C++ and Python applications
 
 A C++ interface to the python property tree is being developed in
 parallel.  For now, know that it exists and brings to C++ most of the
 benefits of the property tree.  (And also enables data sharing between
 applications that are a mix of C++ and Python.)
 
-## Script features for C++
+### Script features for C++
 
 For the C++ developer: incorporating the Property Tree into your
 application brings several conveniences of scripting languages to your
@@ -179,12 +219,17 @@ This way the expensive getNode() function is only called during
 initialization, and the faster class.field notation (Python) or get()
 set() routines (C++) are called during run-time.
 
-## Easy I/O for reading and writing configuration files
+### Easy I/O for reading and writing configuration files
 
 The hierarchical structure of the property tree maps nicely to xml and
-json. (Todo: expand this section.)
+json.  Currently there is an xml reader that loads an xml file and
+populates populates the values into a newly created property (sub)
+tree rooted at the requested location in the larger property tree.
+This is a great way to load a big application config file with a
+single function call.  Then the config values are available in the
+property tree for the various modules to use as needed.
 
-## A note on threaded applications
+### A note on threaded applications
 
 The Property Tree system is *not* thread safe.  I am pondering some
 ideas to make a thread safe version of the property tree, but this
