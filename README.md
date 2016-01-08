@@ -38,12 +38,15 @@ very quickly.  For example, consider a reader/writer example of a
 simple autopilot that reads an external gps and uses that data to
 navigate.
 
+A hierarchical tree structure is easy to understand, easy to organize,
+easy to use, and keeps like data near each other.
+
 ### The writer module
 
 The gps driver module could include the following (python) code:
 
+```
 from props import getNode, root
-
 gps = getNode("/sensors/gps", create=True)
 (lat, lon, alt, speed, ground_track) = read_gps()
 gps.lat = lat
@@ -51,6 +54,7 @@ gps.lon = lon
 gps.alt = alt
 gps.speed = speed
 gps.ground_track = ground_track
+```
 
 With this simple bit of code we have constructed our property tree,
 read the gps, and shared the values with the rest of our application.
@@ -72,14 +76,14 @@ The navigation module needs the gps information from the property tree
 and do something with it.  The code starts out very similar, but watch
 what we can do:
 
+```
 from props import getNode, root
-
 gps = getNode("/sensors/gps", create=True)
 waypoint = getNode("/navigation/route/target", create=True)
 ap = getNode("/autopilot/settings", create=True)
-
 heading = great_circle_route([gps.lat, gps.lon], [waypoint.lat, waypoint.lon])
 ap.target_heading = heading
+```
 
 Did you see what happened there?  We first grabbed the shared gps
 node, but we also grabbed the shared target waypoint node, and we
@@ -89,7 +93,36 @@ We quickly computed the heading from our current location to our
 target waypoint and we wrote that back into the autopilot
 configuration node.
 
+This approach to sharing data between program modules is a bit unique.
+But consider the alternatives: many applications grow the intermodule
+communication ad-hoc as the code evolves and the interfaces are often
+inconsistant as real world data gets incrementally shoved into
+existing C++ class api's.  The result of the ideological approach is
+often messy and clunky.
+
+The property system provides an alternative for shared data that is
+simple, easy to understand, and just works.  It is a different
+philosophy of programming, but the benefits and convenience of the
+property system quickly becomes a way of life.
+
 ### Initialization order.
+
+Please notice that both the reader and writer modules in the above
+example called getNode() with the create flag set to true.  This
+allows initialization order independence.  No matter which module is
+called first, the tree is created properly.
+
+### Direct access to properties
+
+The propoerty tree is constructed out of a thin python shell class.
+Once the appropriate portions of the property tree are created and
+populated, python code can directly reference nodes and values.  For
+example, the following reference should work if the gps sensor tree
+has been created and populated:
+
+```
+lat = props.sensors.gps.lat
+```
 
 ## Sharing data between modules
 
