@@ -151,6 +151,9 @@ int main(int argc, char **argv) {
 
     gps_node.setString("lat", "-45.235");
     double lat = gps_node.getDouble("lat");
+
+    return 0;
+}
 ```
 
 Did you see how the value of "lat" is written as a string constant,
