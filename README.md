@@ -1,5 +1,5 @@
 # aura-props
-A pure python "Preperty Tree" system for: convenient sharing of shared data between modules, organizing data, sharing 'state' between python and C modules.
+A pure python "Property Tree" system for: convenient sharing of shared data between modules, organizing data, sharing state between python and C modules.
 
 ## Background
 
@@ -8,18 +8,18 @@ Traditional data encapsulation involves hiding and protecting a
 module's data so that other modules cannot directly touch it.  Instead
 any interaction with the module's data is through the module's
 carefully crafted API.  This is called "data encapsulation" and it is
-at the foundation of object oriented programing.
+at the foundation of object oriented programming.
 
-Constructing an application's code modules and data in a carefully
-packaged way is a great idea.  It is a very robust way to structure
-your applications and avoid a large class of bugs that arise out of
+Constructing an application's modules and data in a carefully packaged
+way is a great idea.  It is a very robust way to structure your
+applications and avoid a large class of bugs that arise out of
 careless data sharing.  However, every ideology has to eventually
 survive on it's own in the real world.  There is a reason C++ classes
 have static (shared) members and friend functions.  There is a reason
 C++ supports global variable space.  Real world programming challenges
 are often messier than the book examples.
 
-There are times when it makes the most sense to share data globaly
+There are times when it makes the most sense to share data globally
 within your application. It just does.  (Sometimes it still makes
 sense to use a goto.)
 
@@ -67,7 +67,7 @@ grandparents of that node) if they don't already exist.  So in one
 line of code we have constructed the portion of the property tree that
 this module needs.
 
-A propertynode is really just an open ended python class, so we can
+A pyPropertyNode is really just an open ended python class, so we can
 then assign values to any attributes we wish to create.
 
 ### The reader module
@@ -94,7 +94,7 @@ back into the autopilot configuration node.
 This approach to sharing data between program modules is a bit unique.
 But consider the alternatives: many applications grow their
 inter-module communication ad-hoc as the code evolves and some of the
-interfaces can become inconsistant or awkward as real world data gets
+interfaces can become inconsistent or awkward as real world data gets
 incrementally shoved into existing C++ class api's.  The result of the
 ideological approach is often messy and clunky.
 
@@ -113,7 +113,7 @@ first, the tree is created properly.
 
 ### Direct access to properties
 
-The propoerty tree is constructed out of a thin python shell class.
+The property tree is constructed out of a thin python shell class.
 Once the appropriate portions of the property tree are created and
 populated, python code can directly reference nodes and values.  For
 example, the following reference should work if the gps sensor tree
@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
 
 Did you see how the value of "lat" is written as a string constant,
 but can be read back out as a double?  Often it is easy to keep your
-types consistent, but it's nice to just let the backend system convert
+types consistent, but it's nice to just let the back end system convert
 types for you as needed.
  
 ### Performance considerations
@@ -173,8 +173,8 @@ modules initialization routine, cache the pointer that is returned,
 and then use this pointer exclusively in the module's update routines.
 
 This way the expensive getNode() function is only called during
-intialization, and the faster class.field notation (Python) or get*()
-set*() routines (C++) are called during runtime.
+initialization, and the faster class.field notation (Python) or get*()
+set*() routines (C++) are called during run-time.
 
 ## Easy I/O for reading and writing configuration files
 
