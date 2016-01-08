@@ -176,8 +176,8 @@ modules initialization routine, cache the pointer that is returned,
 and then use this pointer exclusively in the module's update routines.
 
 This way the expensive getNode() function is only called during
-initialization, and the faster class.field notation (Python) or get*()
-set*() routines (C++) are called during run-time.
+initialization, and the faster class.field notation (Python) or get()
+set() routines (C++) are called during run-time.
 
 ## Easy I/O for reading and writing configuration files
 
