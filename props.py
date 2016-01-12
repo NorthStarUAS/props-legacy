@@ -97,8 +97,16 @@ class PropertyNode:
             return 0
 
     # return a list of children (attributes)
-    def getChildren(self):
-        return sorted(list(self.__dict__))
+    def getChildren(self, expand=True):
+        result = []
+        for child in self.__dict__:
+            if type(self.__dict__[child]) is list:
+                for i in range(0, len(self.__dict__[child])):
+                    name = child + '[' + str(i) + ']'
+                    result.append(name)
+            else:
+                result.append(child)    
+        return sorted(result)
     
     def pretty_print(self, indent=""):
         for child in self.__dict__:

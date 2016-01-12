@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='props.py',
-      version='1.0',
+      version='1.1',
       description='Python Property Tree',
       author='Curtis L. Olson',
       author_email='curtolson@flightgear.org',
