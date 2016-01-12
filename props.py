@@ -95,7 +95,11 @@ class PropertyNode:
             return len(node)
         else:
             return 0
-        
+
+    # return a list of children (attributes)
+    def getChildren(self):
+        return sorted(list(self.__dict__))
+    
     def pretty_print(self, indent=""):
         for child in self.__dict__:
             node = self.__dict__[child]

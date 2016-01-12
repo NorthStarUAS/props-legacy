@@ -51,3 +51,5 @@ config = getNode('/', create=True)
 file = '/home/curt/Projects/UAS/aura-data/config/main-skywalker_01.xml'
 props_xml.load(file, config)
 props_xml.save("testing.xml", config)
+
+print "sensor children:", sensors.getChildren()
