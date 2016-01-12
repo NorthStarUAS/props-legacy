@@ -33,7 +33,7 @@ gps = getNode("/sensors/gps[5]", create=True)
 gps.alt_m = 275.3
 
 sensors = getNode("/sensors")
-print "gps len = ", sensors.getSize("gps");
+print "gps len = ", sensors.getLen("gps");
 
 # az get's created a parent node
 imu = getNode("/sensors/imu[2]", create=True)
@@ -50,4 +50,4 @@ print "alt_m:", root.sensors.gps[5].alt_m
 config = getNode('/', create=True)
 file = '/home/curt/Projects/UAS/aura-data/config/main-skywalker_01.xml'
 props_xml.load(file, config)
-
+props_xml.save("testing.xml", root)
