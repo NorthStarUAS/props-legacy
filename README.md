@@ -41,7 +41,7 @@ it's essentials, simplified, and rewritten entirely in python.
 The word "System" is carefully chosen.  The Property System is an
 interwoven network of concepts that can bring huge value to your
 application.  It may not be the right choice for every application,
-but for in the right context it is super awesome.
+but in the right context it is super awesome.
 
 * It provides structured data sharing between modules within your
   application.  (I.e. when your app needs global data shared, don't
@@ -240,5 +240,5 @@ For now, if you include threads in your application, know that either
 the property tree should be confined exclusively to one thread, or you
 will need to take extra precautions within your own application to
 ensure two threads do not try to read or write the property tree
-simultaneously.  Doing so could lead to seaming random and difficult
-to debug program crashes.
+simultaneously.  Doing so could lead to random and difficult to debug
+program crashes.

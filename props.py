@@ -32,9 +32,14 @@ class PropertyNode:
     def getChild(self, path, create=False):
         if path[:1] == '/':
             # require relative paths
+            print "Error: attempt to get child with absolute path name"
             return None
+        if re.match('-', path):
+            # require valid python variable names in path
+            print "Error: attempt to use '-' in property name"
+            return None                
         tokens = path.split('/');
-        print "tokens:", tokens
+        # print "tokens:", tokens
         node = self
         for i, token in enumerate(tokens):
             # test for enumerated form: ident[index]
@@ -61,7 +66,10 @@ class PropertyNode:
                         node = tmp[index]
                     else:
                         return None
-                if not isinstance(node, PropertyNode):
+                if isinstance(node, PropertyNode) or type(node) is list:
+                    # ok
+                    pass
+                else:
                     print "path includes leaf nodes, sorry"
                     return None
             elif create:
@@ -81,6 +89,13 @@ class PropertyNode:
         # return the last child node in the path
         return node
 
+    def getLen(self, path):
+        node = self.getChild(path)
+        if type(node) is list:
+            return len(node)
+        else:
+            return 0
+        
     def pretty_print(self, indent=""):
         for child in self.__dict__:
             node = self.__dict__[child]

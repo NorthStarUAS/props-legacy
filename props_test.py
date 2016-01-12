@@ -32,6 +32,9 @@ print n6
 gps = getNode("/sensors/gps[5]", create=True)
 gps.alt_m = 275.3
 
+sensors = getNode("/sensors")
+print "gps len = ", sensors.getSize("gps");
+
 # az get's created a parent node
 imu = getNode("/sensors/imu[2]", create=True)
 # this works, but is bad form because az is originally created as a
