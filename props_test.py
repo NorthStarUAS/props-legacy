@@ -50,4 +50,4 @@ print "alt_m:", root.sensors.gps[5].alt_m
 config = getNode('/', create=True)
 file = '/home/curt/Projects/UAS/aura-data/config/main-skywalker_01.xml'
 props_xml.load(file, config)
-props_xml.save("testing.xml", root)
+props_xml.save("testing.xml", config)

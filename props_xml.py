@@ -77,7 +77,7 @@ def _buildXML(xmlnode, pynode):
             print "skipping:", child, ":", str(node)
         
 # save the property tree starting at pynode into an xml file.
-def save(filename, pynode):
+def save(filename, pynode=root):
     xmlroot = ET.Element('PropertyList')
     xml = ET.ElementTree(xmlroot)
     _buildXML(xmlroot, pynode)
