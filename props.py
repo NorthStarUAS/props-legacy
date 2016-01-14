@@ -62,7 +62,7 @@ class PropertyNode:
                     elif create:
                         # base node exists, but list is not large enough and
                         # create flag requested: extend the list
-                        self.__extendEnumeratedNode(tmp, index)
+                        self.extendEnumeratedNode(tmp, index)
                         node = tmp[index]
                     else:
                         return None
@@ -81,7 +81,7 @@ class PropertyNode:
                     # create node list and extend size as needed
                     node.__dict__[token] = []
                     tmp = node.__dict__[token]
-                    self.__extendEnumeratedNode(tmp, index)
+                    self.extendEnumeratedNode(tmp, index)
                     node = tmp[index]
             else:
                 # requested node not found
@@ -116,13 +116,17 @@ class PropertyNode:
                 node.pretty_print(indent + "  ")
             elif type(node) is list:
                 for i, ele in enumerate(node):
-                    print indent + "/" + child + "[" + str(i) + "]:"
-                    ele.pretty_print(indent + "  ")
+                    if isinstance(ele, PropertyNode):
+                        print indent + "/" + child + "[" + str(i) + "]:"
+                        ele.pretty_print(indent + "  ")
+                    else:
+                        print indent + str(child) + "[" + str(i) + "]:",
+                        print str(ele)
             else:
                 print indent + str(child) + ":",
                 print str(node)
         
-    def __extendEnumeratedNode(self, node, index):
+    def extendEnumeratedNode(self, node, index):
         for i in range(len(node), index+1):
             print "appending:", i
             node.append( PropertyNode() )

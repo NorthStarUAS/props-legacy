@@ -36,7 +36,21 @@ def _parseXML(pynode, xmlnode, basepath):
             load(filename, pynode.__dict__[xmlnode.tag])
         else:
             # leaf
-            if type(xmlnode.tag) is str:
+            if 'n' in xmlnode.attrib:
+                # enumerated node
+                n = int(xmlnode.attrib['n'])
+                if not xmlnode.tag in pynode.__dict__:
+                    pynode.__dict__[xmlnode.tag] = []
+                tmp = pynode.__dict__[xmlnode.tag]
+                pynode.extendEnumeratedNode(tmp, n)
+                pynode.__dict__[xmlnode.tag][n] = xmlnode.text
+                print "leaf:", xmlnode.tag, xmlnode.text, xmlnode.attrib
+            elif xmlnode.tag in pynode.__dict__:
+                # exists already, convert to enumerated.
+                print "converting node to enumerate"
+                savenode = pynode.__dict__[xmlnode.tag]
+                pynode.__dict__[xmlnode.tag] = [ savenode, xmlnode.text ]
+            elif type(xmlnode.tag) is str:
                 pynode.__dict__[xmlnode.tag] = xmlnode.text
             else:
                 print "Skipping unknown node:", xmlnode.tag, ":", xmlnode.text
@@ -66,9 +80,15 @@ def _buildXML(xmlnode, pynode):
             _buildXML(xmlchild, node)
         elif type(node) is list:
             for i, ele in enumerate(node):
-                xmlchild = ET.Element(child)
-                xmlnode.append(xmlchild)
-                _buildXML(xmlchild, ele)
+                if isinstance(ele, PropertyNode):
+                    xmlchild = ET.Element(child)
+                    xmlnode.append(xmlchild)
+                    _buildXML(xmlchild, ele)
+                else:
+                    xmlchild = ET.Element(child)
+                    xmlchild.text = str(ele)
+                    xmlnode.append(xmlchild)
+   
         elif type(child) is str:
             xmlchild = ET.Element(child)
             xmlchild.text = str(node)
