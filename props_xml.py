@@ -69,7 +69,6 @@ def load(filename, pynode):
     xmlroot = xml.getroot()
     for child in xmlroot:
         _parseXML(pynode, child, path)
-    root.pretty_print()
 
 def _buildXML(xmlnode, pynode):
     for child in pynode.__dict__:

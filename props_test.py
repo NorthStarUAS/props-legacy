@@ -53,3 +53,13 @@ props_xml.load(file, config)
 props_xml.save("testing.xml", config)
 
 print "sensor children:", sensors.getChildren()
+for child in sensors.getChildren():
+    node = sensors.getChild(child)
+    print node
+
+global_tasks = getNode("/config/mission/global_tasks");
+print "global_tasks children:", global_tasks.getChildren()
+print global_tasks.task[0].name
+
+a = getNode("/task/home", True)
+b = getNode("/task/home", True)

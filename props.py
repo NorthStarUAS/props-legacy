@@ -30,6 +30,7 @@ import re
 
 class PropertyNode:
     def getChild(self, path, create=False):
+        #print "getChild(" + path + ") create=" + str(create)
         if path[:1] == '/':
             # require relative paths
             print "Error: attempt to get child with absolute path name"
@@ -37,7 +38,7 @@ class PropertyNode:
         if re.match('-', path):
             # require valid python variable names in path
             print "Error: attempt to use '-' in property name"
-            return None                
+            return None
         tokens = path.split('/');
         # print "tokens:", tokens
         node = self
@@ -70,7 +71,7 @@ class PropertyNode:
                     # ok
                     pass
                 else:
-                    print "path includes leaf nodes, sorry"
+                    print "path:", token, "includes leaf nodes, sorry"
                     return None
             elif create:
                 # node not found and create flag is true
@@ -136,11 +137,11 @@ root = PropertyNode()
 
 # return/create a node relative to the shared root property node
 def getNode(path, create=False):
+    print "getNode(" + path + ") create=" + str(create)
     if path[:1] != '/':
         # require leading /
         return None
     elif path == "/":
         # catch trivial case
         return root
-    print "getchild on", path[1:], "relative to root"
     return root.getChild(path[1:], create)
