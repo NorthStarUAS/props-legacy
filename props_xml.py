@@ -9,6 +9,8 @@ from props import PropertyNode, root
 
 # internal xml tree parsing routine
 def _parseXML(pynode, xmlnode, basepath):
+    merge  = 'merge' in xmlnode.attrib
+    exists = xmlnode.tag in pynode.__dict__
     if len(xmlnode) or 'include' in xmlnode.attrib:
         # has children
         newnode = PropertyNode()
@@ -16,9 +18,8 @@ def _parseXML(pynode, xmlnode, basepath):
             filename = basepath + '/' + xmlnode.attrib['include']
             print "calling load():", filename, xmlnode.attrib
             load(filename, newnode)
-        if xmlnode.tag in pynode.__dict__:
-            # node exists
-            print "node exists:", xmlnode.tag
+        if exists:
+            print "node exists:", xmlnode.tag, "merge:", merge
             if type(pynode.__dict__[xmlnode.tag]) is list:
                 # all is well
                 pynode.__dict__[xmlnode.tag].append( newnode )
@@ -38,17 +39,24 @@ def _parseXML(pynode, xmlnode, basepath):
         if 'n' in xmlnode.attrib:
             # enumerated node
             n = int(xmlnode.attrib['n'])
-            if not xmlnode.tag in pynode.__dict__:
+            if not exists:
                 pynode.__dict__[xmlnode.tag] = []
             tmp = pynode.__dict__[xmlnode.tag]
             pynode.extendEnumeratedNode(tmp, n)
             pynode.__dict__[xmlnode.tag][n] = xmlnode.text
             print "leaf:", xmlnode.tag, xmlnode.text, xmlnode.attrib
-        elif xmlnode.tag in pynode.__dict__:
-            # exists already, convert to enumerated.
-            print "converting node to enumerate"
-            savenode = pynode.__dict__[xmlnode.tag]
-            pynode.__dict__[xmlnode.tag] = [ savenode, xmlnode.text ]
+        elif exists:
+            if not merge:
+                # append
+                if not type(pynode.__dict__[xmlnode.tag]) is list:
+                    # convert to enumerated.
+                    print "converting node to enumerate"
+                    savenode = pynode.__dict__[xmlnode.tag]
+                    pynode.__dict__[xmlnode.tag] = [ savenode ]
+                pynode.__dict__[xmlnode.tag].append(xmlnode.text)
+            else:
+                # overwrite
+                pynode.__dict__[xmlnode.tag] = xmlnode.text
         elif type(xmlnode.tag) is str:
             pynode.__dict__[xmlnode.tag] = xmlnode.text
         else:
