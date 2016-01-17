@@ -9,9 +9,13 @@ from props import PropertyNode, root
 
 # internal xml tree parsing routine
 def _parseXML(pynode, xmlnode, basepath):
-    if len(xmlnode):
+    if len(xmlnode) or 'include' in xmlnode.attrib:
         # has children
         newnode = PropertyNode()
+        if 'include' in xmlnode.attrib:
+            filename = basepath + '/' + xmlnode.attrib['include']
+            print "calling load():", filename, xmlnode.attrib
+            load(filename, newnode)
         if xmlnode.tag in pynode.__dict__:
             # node exists
             print "node exists:", xmlnode.tag
@@ -30,30 +34,25 @@ def _parseXML(pynode, xmlnode, basepath):
         for child in xmlnode:
             _parseXML(newnode, child, basepath)
     else:
-        if 'include' in xmlnode.attrib:
-            pynode.__dict__[xmlnode.tag] = PropertyNode()
-            filename = basepath + '/' + xmlnode.attrib['include']
-            load(filename, pynode.__dict__[xmlnode.tag])
+        # leaf
+        if 'n' in xmlnode.attrib:
+            # enumerated node
+            n = int(xmlnode.attrib['n'])
+            if not xmlnode.tag in pynode.__dict__:
+                pynode.__dict__[xmlnode.tag] = []
+            tmp = pynode.__dict__[xmlnode.tag]
+            pynode.extendEnumeratedNode(tmp, n)
+            pynode.__dict__[xmlnode.tag][n] = xmlnode.text
+            print "leaf:", xmlnode.tag, xmlnode.text, xmlnode.attrib
+        elif xmlnode.tag in pynode.__dict__:
+            # exists already, convert to enumerated.
+            print "converting node to enumerate"
+            savenode = pynode.__dict__[xmlnode.tag]
+            pynode.__dict__[xmlnode.tag] = [ savenode, xmlnode.text ]
+        elif type(xmlnode.tag) is str:
+            pynode.__dict__[xmlnode.tag] = xmlnode.text
         else:
-            # leaf
-            if 'n' in xmlnode.attrib:
-                # enumerated node
-                n = int(xmlnode.attrib['n'])
-                if not xmlnode.tag in pynode.__dict__:
-                    pynode.__dict__[xmlnode.tag] = []
-                tmp = pynode.__dict__[xmlnode.tag]
-                pynode.extendEnumeratedNode(tmp, n)
-                pynode.__dict__[xmlnode.tag][n] = xmlnode.text
-                print "leaf:", xmlnode.tag, xmlnode.text, xmlnode.attrib
-            elif xmlnode.tag in pynode.__dict__:
-                # exists already, convert to enumerated.
-                print "converting node to enumerate"
-                savenode = pynode.__dict__[xmlnode.tag]
-                pynode.__dict__[xmlnode.tag] = [ savenode, xmlnode.text ]
-            elif type(xmlnode.tag) is str:
-                pynode.__dict__[xmlnode.tag] = xmlnode.text
-            else:
-                print "Skipping unknown node:", xmlnode.tag, ":", xmlnode.text
+            print "Skipping unknown node:", xmlnode.tag, ":", xmlnode.text
                 
 # load xml file and create a property tree rooted at the given node
 # supports <mytag include="relative_file_path.xml" />

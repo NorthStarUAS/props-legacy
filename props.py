@@ -52,19 +52,24 @@ class PropertyNode:
                 index = None
             if token in node.__dict__:
                 # node exists
+                child = node.__dict__[token]
+                child_type = type(child)
                 if index == None:
-                    # non-enumerated node
-                    node = node.__dict__[token]
+                    if not child_type is list:
+                        # requested non-indexed node, and node is not indexed
+                        node = node.__dict__[token]
+                    else:
+                        # node is indexed use the first element
+                        node = node.__dict__[token][0]
                 else:
                     # enumerated (list) node
-                    tmp = node.__dict__[token]
-                    if type(tmp) is list and len(tmp) > index:
-                        node = tmp[index]
+                    if child_type is list and len(child) > index:
+                        node = child[index]
                     elif create:
                         # base node exists, but list is not large enough and
                         # create flag requested: extend the list
-                        self.extendEnumeratedNode(tmp, index)
-                        node = tmp[index]
+                        self.extendEnumeratedNode(child, index)
+                        node = child[index]
                     else:
                         return None
                 if isinstance(node, PropertyNode) or type(node) is list:
@@ -137,7 +142,7 @@ root = PropertyNode()
 
 # return/create a node relative to the shared root property node
 def getNode(path, create=False):
-    print "getNode(" + path + ") create=" + str(create)
+    #print "getNode(" + path + ") create=" + str(create)
     if path[:1] != '/':
         # require leading /
         return None
