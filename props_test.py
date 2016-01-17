@@ -68,3 +68,20 @@ b.val = 123
 c = getNode("/task", True)
 print "leaf /task/home:", c.isLeaf("home")
 print "leaf /task/home/val:", b.isLeaf("val")
+
+d = getNode("/sensors/device", True)
+
+d1 = getNode("/sensors/device[0]", True)
+d1.var1 = "It is me!"
+
+print "d:", d.getChildren()
+print "d1:", d.getChildren()
+
+getNode("/sensors").pretty_print()
+
+
+air = getNode("/sensors/airdata", True)
+air1 = sensors.getChild("/airdata[0]", True)
+sensors.pretty_print()
+
+b = getNode("/sensors/", True)

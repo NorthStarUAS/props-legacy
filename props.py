@@ -30,11 +30,16 @@ import re
 
 class PropertyNode:
     def getChild(self, path, create=False):
-        #print "getChild(" + path + ") create=" + str(create)
-        if path[:1] == '/':
+        # print "getChild(" + path + ") create=" + str(create)
+        if path.startswith('/'):
             # require relative paths
             print "Error: attempt to get child with absolute path name"
             return None
+        if path.endswith('/'):
+            # we will strip this, but let's complain loudly because the
+            # caller is being sloppy.
+            print "WARNING: a sloppy coder has used a trailing / in a path:", path
+            path = path[:-1]
         if re.match('-', path):
             # require valid python variable names in path
             print "Error: attempt to use '-' in property name"
@@ -51,9 +56,11 @@ class PropertyNode:
             else:
                 index = None
             if token in node.__dict__:
+                #print "node exists:", token
                 # node exists
                 child = node.__dict__[token]
                 child_type = type(child)
+                #print "type =", str(child_type)
                 if index == None:
                     if not child_type is list:
                         # requested non-indexed node, and node is not indexed
@@ -62,13 +69,22 @@ class PropertyNode:
                         # node is indexed use the first element
                         node = node.__dict__[token][0]
                 else:
+                    #print "requesting enumerated node"
                     # enumerated (list) node
                     if child_type is list and len(child) > index:
                         node = child[index]
                     elif create:
-                        # base node exists, but list is not large enough and
-                        # create flag requested: extend the list
-                        self.extendEnumeratedNode(child, index)
+                        if child_type is list:
+                            # list is not large enough and create flag
+                            # requested: extend the list
+                            self.extendEnumeratedNode(child, index)
+                        else:
+                            # create on enumerated node, but not a
+                            # list yet
+                            save = child
+                            node.__dict__[token] = [save]
+                            child = node.__dict__[token]
+                            self.extendEnumeratedNode(child, index)
                         node = child[index]
                     else:
                         return None

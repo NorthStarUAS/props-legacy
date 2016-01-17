@@ -35,7 +35,7 @@ def _parseXML(pynode, xmlnode, basepath):
                 print "node exists:", xmlnode.tag, "merge:", merge
                 if not type(pynode.__dict__[xmlnode.tag]) is list:
                     # we need to convert this to an enumerated list
-                    print "converting node to enumerate"
+                    print "converting node to enumerated:", xmlnode.tag
                     savenode = pynode.__dict__[xmlnode.tag]
                     pynode.__dict__[xmlnode.tag] = [ savenode ]
                 pynode.__dict__[xmlnode.tag].append(newnode)
@@ -104,10 +104,13 @@ def _buildXML(xmlnode, pynode):
             for i, ele in enumerate(node):
                 if isinstance(ele, PropertyNode):
                     xmlchild = ET.Element(child)
+                    print "attrib n =", i
+                    xmlchild.attrib['n'] = str(i)
                     xmlnode.append(xmlchild)
                     _buildXML(xmlchild, ele)
                 else:
                     xmlchild = ET.Element(child)
+                    xmlchild.attrib['n'] = str(i)
                     xmlchild.text = str(ele)
                     xmlnode.append(xmlchild)
    
