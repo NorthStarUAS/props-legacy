@@ -114,6 +114,10 @@ class PropertyNode:
                 result.append(child)    
         return sorted(result)
     
+    def isLeaf(self, path):
+        node = self.getChild(path)
+        return not isinstance(node, PropertyNode)
+
     def pretty_print(self, indent=""):
         for child in self.__dict__:
             node = self.__dict__[child]

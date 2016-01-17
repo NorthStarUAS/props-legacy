@@ -18,17 +18,30 @@ def _parseXML(pynode, xmlnode, basepath):
             filename = basepath + '/' + xmlnode.attrib['include']
             print "calling load():", filename, xmlnode.attrib
             load(filename, newnode)
-        if exists:
-            print "node exists:", xmlnode.tag, "merge:", merge
-            if type(pynode.__dict__[xmlnode.tag]) is list:
-                # all is well
-                pynode.__dict__[xmlnode.tag].append( newnode )
-                print "all is well appending to list:", len(pynode.__dict__[xmlnode.tag])
-            else:
-                # we need to convert this to an enumerated list
-                print "converting node to enumerate"
+        if 'n' in xmlnode.attrib:
+            # enumerated node
+            n = int(xmlnode.attrib['n'])
+            if not exists:
+                pynode.__dict__[xmlnode.tag] = []
+            elif not type(pynode.__dict__[xmlnode.tag]) is list:
                 savenode = pynode.__dict__[xmlnode.tag]
-                pynode.__dict__[xmlnode.tag] = [ savenode, newnode ]
+                pynode.__dict__[xmlnode.tag] = [ savenode ]
+            tmp = pynode.__dict__[xmlnode.tag]
+            pynode.extendEnumeratedNode(tmp, n)
+            pynode.__dict__[xmlnode.tag][n] = newnode
+        elif exists:
+            if not merge:
+                # append
+                print "node exists:", xmlnode.tag, "merge:", merge
+                if not type(pynode.__dict__[xmlnode.tag]) is list:
+                    # we need to convert this to an enumerated list
+                    print "converting node to enumerate"
+                    savenode = pynode.__dict__[xmlnode.tag]
+                    pynode.__dict__[xmlnode.tag] = [ savenode ]
+                pynode.__dict__[xmlnode.tag].append(newnode)
+            else:
+                # merge (follow existing tree)
+                newnode = pynode.__dict__[xmlnode.tag]
         else:
             # create new node
             pynode.__dict__[xmlnode.tag] = newnode
@@ -41,6 +54,9 @@ def _parseXML(pynode, xmlnode, basepath):
             n = int(xmlnode.attrib['n'])
             if not exists:
                 pynode.__dict__[xmlnode.tag] = []
+            elif not type(pynode.__dict__[xmlnode.tag]) is list:
+                savenode = pynode.__dict__[xmlnode.tag]
+                pynode.__dict__[xmlnode.tag] = [ savenode ]
             tmp = pynode.__dict__[xmlnode.tag]
             pynode.extendEnumeratedNode(tmp, n)
             pynode.__dict__[xmlnode.tag][n] = xmlnode.text

@@ -63,3 +63,8 @@ print global_tasks.task[0].name
 
 a = getNode("/task/home", True)
 b = getNode("/task/home", True)
+b.val = 123
+
+c = getNode("/task", True)
+print "leaf /task/home:", c.isLeaf("home")
+print "leaf /task/home/val:", b.isLeaf("val")
