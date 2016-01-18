@@ -9,7 +9,7 @@ from props import PropertyNode, root
 
 # internal xml tree parsing routine
 def _parseXML(pynode, xmlnode, basepath):
-    merge  = 'merge' in xmlnode.attrib
+    overlay  = 'overlay' in xmlnode.attrib
     exists = xmlnode.tag in pynode.__dict__
     if len(xmlnode) or 'include' in xmlnode.attrib:
         # has children
@@ -30,9 +30,9 @@ def _parseXML(pynode, xmlnode, basepath):
             pynode.extendEnumeratedNode(tmp, n)
             pynode.__dict__[xmlnode.tag][n] = newnode
         elif exists:
-            if not merge:
+            if not overlay:
                 # append
-                print "node exists:", xmlnode.tag, "merge:", merge
+                print "node exists:", xmlnode.tag, "overlay:", overlay
                 if not type(pynode.__dict__[xmlnode.tag]) is list:
                     # we need to convert this to an enumerated list
                     print "converting node to enumerated:", xmlnode.tag
@@ -40,7 +40,7 @@ def _parseXML(pynode, xmlnode, basepath):
                     pynode.__dict__[xmlnode.tag] = [ savenode ]
                 pynode.__dict__[xmlnode.tag].append(newnode)
             else:
-                # merge (follow existing tree)
+                # overlay (follow existing tree)
                 newnode = pynode.__dict__[xmlnode.tag]
         else:
             # create new node
@@ -62,7 +62,7 @@ def _parseXML(pynode, xmlnode, basepath):
             pynode.__dict__[xmlnode.tag][n] = xmlnode.text
             print "leaf:", xmlnode.tag, xmlnode.text, xmlnode.attrib
         elif exists:
-            if not merge:
+            if not overlay:
                 # append
                 if not type(pynode.__dict__[xmlnode.tag]) is list:
                     # convert to enumerated.
