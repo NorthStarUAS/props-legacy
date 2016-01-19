@@ -30,7 +30,7 @@ import re
 
 class PropertyNode:
     def getChild(self, path, create=False):
-        # print "getChild(" + path + ") create=" + str(create)
+        print "getChild(" + path + ") create=" + str(create)
         if path.startswith('/'):
             # require relative paths
             print "Error: attempt to get child with absolute path name"
@@ -45,7 +45,7 @@ class PropertyNode:
             print "Error: attempt to use '-' in property name"
             return None
         tokens = path.split('/');
-        # print "tokens:", tokens
+        print "tokens:", tokens
         node = self
         for i, token in enumerate(tokens):
             # test for enumerated form: ident[index]
@@ -56,11 +56,11 @@ class PropertyNode:
             else:
                 index = None
             if token in node.__dict__:
-                #print "node exists:", token
+                print "node exists:", token
                 # node exists
                 child = node.__dict__[token]
                 child_type = type(child)
-                #print "type =", str(child_type)
+                print "type =", str(child_type)
                 if index == None:
                     if not child_type is list:
                         # requested non-indexed node, and node is not indexed
@@ -69,7 +69,7 @@ class PropertyNode:
                         # node is indexed use the first element
                         node = node.__dict__[token][0]
                 else:
-                    #print "requesting enumerated node"
+                    print "requesting enumerated node"
                     # enumerated (list) node
                     if child_type is list and len(child) > index:
                         node = child[index]
@@ -111,12 +111,16 @@ class PropertyNode:
         # return the last child node in the path
         return node
 
-    def getLen(self, path):
-        node = self.getChild(path)
-        if type(node) is list:
-            return len(node)
+    def getLen(self, child):
+        if child in self.__dict__:
+            if type(self.__dict__[child]) is list:
+                return len(self.__dict__[child])
+            else:
+                print "WARNING in getLen() path = ", child, " is not enumerated"
+                return 1
         else:
-            return 0
+            print "WARNING: request length of non-existant attribute:", child
+        return 0
 
     # return a list of children (attributes)
     def getChildren(self, expand=True):
