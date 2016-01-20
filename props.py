@@ -30,7 +30,7 @@ import re
 
 class PropertyNode:
     def getChild(self, path, create=False):
-        print "getChild(" + path + ") create=" + str(create)
+        #print "getChild(" + path + ") create=" + str(create)
         if path.startswith('/'):
             # require relative paths
             print "Error: attempt to get child with absolute path name"
@@ -45,7 +45,7 @@ class PropertyNode:
             print "Error: attempt to use '-' in property name"
             return None
         tokens = path.split('/');
-        print "tokens:", tokens
+        #print "tokens:", tokens
         node = self
         for i, token in enumerate(tokens):
             # test for enumerated form: ident[index]
@@ -56,11 +56,11 @@ class PropertyNode:
             else:
                 index = None
             if token in node.__dict__:
-                print "node exists:", token
+                #print "node exists:", token
                 # node exists
                 child = node.__dict__[token]
                 child_type = type(child)
-                print "type =", str(child_type)
+                #print "type =", str(child_type)
                 if index == None:
                     if not child_type is list:
                         # requested non-indexed node, and node is not indexed
@@ -69,7 +69,7 @@ class PropertyNode:
                         # node is indexed use the first element
                         node = node.__dict__[token][0]
                 else:
-                    print "requesting enumerated node"
+                    #print "requesting enumerated node"
                     # enumerated (list) node
                     if child_type is list and len(child) > index:
                         node = child[index]
@@ -122,6 +122,21 @@ class PropertyNode:
             print "WARNING: request length of non-existant attribute:", child
         return 0
 
+    # make the specified node enumerated (if needed) and expand the
+    # length (if needed)
+    def setLen(self, child, size, init_val=None):
+        if child in self.__dict__:
+            if not type(self.__dict__[child]) is list:
+                # convert existing element to element[0]
+                save = self.__dict__[child]
+                self.__dict__[child] = [save]
+        else:
+            self.__dict__[child] = []
+        if init_val == None:
+            self.extendEnumeratedNode(self.__dict__[child], size)
+        else:
+            self.extendEnumeratedLeaf(self.__dict__[child], size, init_val)
+        
     # return a list of children (attributes)
     def getChildren(self, expand=True):
         result = []
@@ -145,7 +160,9 @@ class PropertyNode:
                 print indent + "/" + child
                 node.pretty_print(indent + "  ")
             elif type(node) is list:
+                print "child is list"
                 for i, ele in enumerate(node):
+                    print i, str(ele)
                     if isinstance(ele, PropertyNode):
                         print indent + "/" + child + "[" + str(i) + "]:"
                         ele.pretty_print(indent + "  ")
@@ -160,6 +177,11 @@ class PropertyNode:
         for i in range(len(node), index+1):
             print "appending:", i
             node.append( PropertyNode() )
+            
+    def extendEnumeratedLeaf(self, node, index, init_val):
+        for i in range(len(node), index+1):
+            print "appending:", i, "=", init_val
+            node.append( init_val )
             
         
 root = PropertyNode()

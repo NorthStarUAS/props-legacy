@@ -48,7 +48,7 @@ root.pretty_print()
 print "alt_m:", root.sensors.gps[5].alt_m
 
 config = getNode('/', create=True)
-file = '/home/curt/Projects/UAS/aura-data/config/main-skywalker_01.xml'
+file = '/home/curt/Source/AuraUAS/aura-data/config/main-skywalker_01.xml'
 props_xml.load(file, config)
 props_xml.save("testing.xml", config)
 
@@ -85,3 +85,5 @@ air1 = sensors.getChild("/airdata[0]", True)
 sensors.pretty_print()
 
 b = getNode("/sensors/", True)
+b.setLen("newattr", 10, 0.0)
+print b.newattr
