@@ -32,7 +32,7 @@ def _parseXML(pynode, xmlnode, basepath):
         elif exists:
             if not overlay:
                 # append
-                print "node exists:", xmlnode.tag, "overlay:", overlay
+                # print "node exists:", xmlnode.tag, "overlay:", overlay
                 if not type(pynode.__dict__[xmlnode.tag]) is list:
                     # we need to convert this to an enumerated list
                     print "converting node to enumerated:", xmlnode.tag
@@ -60,13 +60,13 @@ def _parseXML(pynode, xmlnode, basepath):
             tmp = pynode.__dict__[xmlnode.tag]
             pynode.extendEnumeratedNode(tmp, n)
             pynode.__dict__[xmlnode.tag][n] = xmlnode.text
-            print "leaf:", xmlnode.tag, xmlnode.text, xmlnode.attrib
+            # print "leaf:", xmlnode.tag, xmlnode.text, xmlnode.attrib
         elif exists:
             if not overlay:
                 # append
                 if not type(pynode.__dict__[xmlnode.tag]) is list:
                     # convert to enumerated.
-                    print "converting node to enumerate"
+                    print "converting node to enumerated"
                     savenode = pynode.__dict__[xmlnode.tag]
                     pynode.__dict__[xmlnode.tag] = [ savenode ]
                 pynode.__dict__[xmlnode.tag].append(xmlnode.text)
@@ -76,7 +76,8 @@ def _parseXML(pynode, xmlnode, basepath):
         elif type(xmlnode.tag) is str:
             pynode.__dict__[xmlnode.tag] = xmlnode.text
         else:
-            print "Skipping unknown node:", xmlnode.tag, ":", xmlnode.text
+            # print "Skipping unknown node:", xmlnode.tag, ":", xmlnode.text
+            pass
                 
 # load xml file and create a property tree rooted at the given node
 # supports <mytag include="relative_file_path.xml" />
@@ -104,7 +105,7 @@ def _buildXML(xmlnode, pynode):
             for i, ele in enumerate(node):
                 if isinstance(ele, PropertyNode):
                     xmlchild = ET.Element(child)
-                    print "attrib n =", i
+                    # print "attrib n =", i
                     xmlchild.attrib['n'] = str(i)
                     xmlnode.append(xmlchild)
                     _buildXML(xmlchild, ele)

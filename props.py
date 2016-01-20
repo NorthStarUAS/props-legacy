@@ -125,17 +125,22 @@ class PropertyNode:
     # make the specified node enumerated (if needed) and expand the
     # length (if needed)
     def setLen(self, child, size, init_val=None):
+        #print "called setLen()", child, size
         if child in self.__dict__:
             if not type(self.__dict__[child]) is list:
                 # convert existing element to element[0]
+                print "converting:", child, "to enumerated"
                 save = self.__dict__[child]
                 self.__dict__[child] = [save]
         else:
+            #print "creating:", child
             self.__dict__[child] = []
         if init_val == None:
-            self.extendEnumeratedNode(self.__dict__[child], size)
+            #print "extending branch nodes:", size
+            self.extendEnumeratedNode(self.__dict__[child], size-1)
         else:
-            self.extendEnumeratedLeaf(self.__dict__[child], size, init_val)
+            #print "extending leaf nodes:", size
+            self.extendEnumeratedLeaf(self.__dict__[child], size-1, init_val)
         
     # return a list of children (attributes)
     def getChildren(self, expand=True):
@@ -160,9 +165,9 @@ class PropertyNode:
                 print indent + "/" + child
                 node.pretty_print(indent + "  ")
             elif type(node) is list:
-                print "child is list"
+                # print "child is list"
                 for i, ele in enumerate(node):
-                    print i, str(ele)
+                    # print i, str(ele)
                     if isinstance(ele, PropertyNode):
                         print indent + "/" + child + "[" + str(i) + "]:"
                         ele.pretty_print(indent + "  ")
@@ -175,12 +180,12 @@ class PropertyNode:
         
     def extendEnumeratedNode(self, node, index):
         for i in range(len(node), index+1):
-            print "appending:", i
+            print "branch appending:", i
             node.append( PropertyNode() )
             
     def extendEnumeratedLeaf(self, node, index, init_val):
         for i in range(len(node), index+1):
-            print "appending:", i, "=", init_val
+            print "leaf appending:", i, "=", init_val
             node.append( init_val )
             
         
