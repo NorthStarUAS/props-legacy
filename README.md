@@ -1,5 +1,6 @@
 # aura-props
-A pure python "Property Tree" system for: convenient sharing of shared data between modules, organizing data, sharing state between python and C modules.
+
+A pure python "property tree" system for: convenient sharing of shared data between modules, organizing data, sharing state between python and C modules.
 
 ## Background
 
