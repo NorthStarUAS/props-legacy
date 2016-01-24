@@ -49,6 +49,14 @@ def _parseXML(pynode, xmlnode, basepath):
             _parseXML(newnode, child, basepath)
     else:
         # leaf
+        value = xmlnode.text
+        if 'type' in xmlnode.attrib:
+            if xmlnode.attrib['type'] == 'bool':
+                print xmlnode.tag, "is bool"
+                if value == '0' or value == 'false' or value == '':
+                    value = False
+                else:
+                    value = True
         if 'n' in xmlnode.attrib:
             # enumerated node
             n = int(xmlnode.attrib['n'])
@@ -59,8 +67,8 @@ def _parseXML(pynode, xmlnode, basepath):
                 pynode.__dict__[xmlnode.tag] = [ savenode ]
             tmp = pynode.__dict__[xmlnode.tag]
             pynode.extendEnumeratedNode(tmp, n)
-            pynode.__dict__[xmlnode.tag][n] = xmlnode.text
-            # print "leaf:", xmlnode.tag, xmlnode.text, xmlnode.attrib
+            pynode.__dict__[xmlnode.tag][n] = value
+            # print "leaf:", xmlnode.tag, value, xmlnode.attrib
         elif exists:
             if not overlay:
                 # append
@@ -69,14 +77,14 @@ def _parseXML(pynode, xmlnode, basepath):
                     print "converting node to enumerated"
                     savenode = pynode.__dict__[xmlnode.tag]
                     pynode.__dict__[xmlnode.tag] = [ savenode ]
-                pynode.__dict__[xmlnode.tag].append(xmlnode.text)
+                pynode.__dict__[xmlnode.tag].append(value)
             else:
                 # overwrite
-                pynode.__dict__[xmlnode.tag] = xmlnode.text
+                pynode.__dict__[xmlnode.tag] = value
         elif type(xmlnode.tag) is str:
-            pynode.__dict__[xmlnode.tag] = xmlnode.text
+            pynode.__dict__[xmlnode.tag] = value
         else:
-            # print "Skipping unknown node:", xmlnode.tag, ":", xmlnode.text
+            # print "Skipping unknown node:", xmlnode.tag, ":", value
             pass
                 
 # load xml file and create a property tree rooted at the given node

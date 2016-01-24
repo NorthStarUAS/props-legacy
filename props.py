@@ -165,7 +165,7 @@ class PropertyNode:
                 print indent + "/" + child
                 node.pretty_print(indent + "  ")
             elif type(node) is list:
-                # print "child is list"
+                #print "child is list:", str(node)
                 for i, ele in enumerate(node):
                     # print i, str(ele)
                     if isinstance(ele, PropertyNode):
