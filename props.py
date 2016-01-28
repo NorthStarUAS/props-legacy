@@ -29,6 +29,12 @@ Notes:
 import re
 
 class PropertyNode:
+    def hasChild(self, path):
+        if path in self.__dict__:
+            return True
+        else:
+            return False
+
     def getChild(self, path, create=False):
         #print "getChild(" + path + ") create=" + str(create)
         if path.startswith('/'):
