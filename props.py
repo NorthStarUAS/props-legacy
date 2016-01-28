@@ -29,8 +29,8 @@ Notes:
 import re
 
 class PropertyNode:
-    def hasChild(self, path):
-        if path in self.__dict__:
+    def hasChild(self, name):
+        if name in self.__dict__:
             return True
         else:
             return False
@@ -164,6 +164,42 @@ class PropertyNode:
         node = self.getChild(path)
         return not isinstance(node, PropertyNode)
 
+    def getFloat(self, name):
+        if name in self.__dict__:
+            return float(self.__dict__[name])
+        else:
+            return 0.0
+            
+    def getInt(self, name):
+        if name in self.__dict__:
+            return int(self.__dict__[name])
+        else:
+            return 0
+
+    def getBool(self, name):
+        if name in self.__dict__:
+            return bool(self.__dict__[name])
+        else:
+            return False
+
+    def getString(self, name):
+        if name in self.__dict__:
+            return str(self.__dict__[name])
+        else:
+            return ""
+
+    def setFloat(self, name, val):
+        self.__dict__[name] = float(val)
+            
+    def setInt(self, name, val):
+        self.__dict__[name] = int(val)
+            
+    def setBool(self, name, val):
+        self.__dict__[name] = bool(val)
+            
+    def setString(self, name, val):
+        self.__dict__[name] = str(val)
+            
     def pretty_print(self, indent=""):
         for child in self.__dict__:
             node = self.__dict__[child]
