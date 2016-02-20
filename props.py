@@ -199,7 +199,11 @@ class PropertyNode:
             
     def setString(self, name, val):
         self.__dict__[name] = str(val)
-            
+
+    def setFloatEnum(self, name, index, val):
+        self.extendEnumeratedNode(self.__dict__[name], index)
+        self.__dict__[name][index] = val
+        
     def pretty_print(self, indent=""):
         for child in self.__dict__:
             node = self.__dict__[child]
