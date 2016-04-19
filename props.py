@@ -188,6 +188,13 @@ class PropertyNode:
         else:
             return ""
 
+    def getFloatEnum(self, name, index):
+        if name in self.__dict__:
+            self.extendEnumeratedNode(self.__dict__[name], index)
+            return float(self.__dict__[name][index])
+        else:
+            return 0.0
+            
     def setFloat(self, name, val):
         self.__dict__[name] = float(val)
             
