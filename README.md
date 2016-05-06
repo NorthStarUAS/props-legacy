@@ -1,6 +1,19 @@
 # aura-props
 
-A pure python "property tree" system for: convenient sharing of shared data between modules, organizing data, sharing state between python and C modules.
+Aura-props is a pure python "property tree" system for convenient
+organization and sharing of data between code modules.
+
+Aura-core (available separately) includes a C++ interface so that the
+property tree can also serve as a simple mechanism for sharing data
+between mixed python/C++ modules (without needing to run the gauntlet
+of the very tricky python API.)
+
+Traditionally code modules pass data through a rigid (and often
+brittle or clunky) API defined by each module.  The property tree
+establishes an organized tree of data that is shared and accessible by
+all modules in the application.  It assumes some basic cooperation and
+rule following between modules, but there are many very nice outcomes
+to this approach.
 
 ## Background
 
