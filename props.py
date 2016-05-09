@@ -233,12 +233,12 @@ class PropertyNode:
         
     def extendEnumeratedNode(self, node, index):
         for i in range(len(node), index+1):
-            print "branch appending:", i
+            # print "branch appending:", i
             node.append( PropertyNode() )
             
     def extendEnumeratedLeaf(self, node, index, init_val):
         for i in range(len(node), index+1):
-            print "leaf appending:", i, "=", init_val
+            # print "leaf appending:", i, "=", init_val
             node.append( init_val )
             
         
