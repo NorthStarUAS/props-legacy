@@ -66,7 +66,7 @@ def _parseXML(pynode, xmlnode, basepath):
                 savenode = pynode.__dict__[xmlnode.tag]
                 pynode.__dict__[xmlnode.tag] = [ savenode ]
             tmp = pynode.__dict__[xmlnode.tag]
-            pynode.extendEnumeratedNode(tmp, n)
+            pynode.extendEnumeratedLeaf(tmp, n, "")
             pynode.__dict__[xmlnode.tag][n] = value
             # print "leaf:", xmlnode.tag, value, xmlnode.attrib
         elif exists:
