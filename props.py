@@ -195,6 +195,13 @@ class PropertyNode:
         else:
             return 0.0
             
+    def getStringEnum(self, name, index):
+        if name in self.__dict__:
+            self.extendEnumeratedNode(self.__dict__[name], index)
+            return str(self.__dict__[name][index])
+        else:
+            return ""
+            
     def setFloat(self, name, val):
         self.__dict__[name] = float(val)
             
