@@ -195,6 +195,13 @@ class PropertyNode:
         else:
             return 0.0
             
+    def getIntEnum(self, name, index):
+        if name in self.__dict__:
+            self.extendEnumeratedNode(self.__dict__[name], index)
+            return int(self.__dict__[name][index])
+        else:
+            return 0.0
+            
     def getStringEnum(self, name, index):
         if name in self.__dict__:
             self.extendEnumeratedNode(self.__dict__[name], index)
@@ -215,8 +222,16 @@ class PropertyNode:
         self.__dict__[name] = str(val)
 
     def setFloatEnum(self, name, index, val):
+        if not name in self.__dict__:
+            self.setLen(name, index, 0.0)            
         self.extendEnumeratedNode(self.__dict__[name], index)
         self.__dict__[name][index] = val
+        
+    def setIntEnum(self, name, index, val):
+        if not name in self.__dict__:
+            self.setLen(name, index, 0)            
+        self.extendEnumeratedNode(self.__dict__[name], index)
+        self.__dict__[name][index] = int(val)
         
     def pretty_print(self, indent=""):
         for child in self.__dict__:
