@@ -9,7 +9,28 @@ import json
 from props import PropertyNode, root
 
 # internal dict() tree parsing routine
-def parseDict(pynode, xmlnode, basepath):
+def parseDict(pynode, newdict, basepath):
+    for tag in newdict:
+        if type(newdict[tag]) is dict:
+            newnode = PropertyNode()
+            pynode.__dict__[tag] = newnode
+            parseDict(newnode, newdict[tag], basepath)
+        elif type(newdict[tag]) is list:
+            pynode.__dict__[tag] = []
+            for ele in newdict[tag]:
+                if type(ele) is dict:
+                    newnode = PropertyNode()
+                    pynode.__dict__[tag].append(newnode)
+                    parseDict(newnode, ele, basepath)
+                else:
+                    pynode.__dict__[tag].append(ele)
+        elif type(newdict[tag]) is unicode:
+            pynode.__dict__[tag] = newdict[tag]
+        else:
+            print 'skipping:', tag, type(newdict[tag])
+
+# old xml parsing       
+def parseXML(pynode, xmlnode, basepath):
     overlay  = 'overlay' in xmlnode.attrib
     exists = xmlnode.tag in pynode.__dict__
     if len(xmlnode) or 'include' in xmlnode.attrib:
@@ -91,6 +112,7 @@ def parseDict(pynode, xmlnode, basepath):
 # load a json file and create a property tree rooted at the given node
 # supports "mytag": "include=relative_file_path.json"
 def load(filename, pynode):
+    print "loading:", filename
     try:
         f = open(filename, 'r')
         newdict = json.load(f)
@@ -101,7 +123,7 @@ def load(filename, pynode):
 
     path = os.path.dirname(filename)
     print "path:", path
-    parseDict(pynode, dict, path)
+    parseDict(pynode, newdict, path)
 
 def buildDict(root, pynode):
     for child in pynode.__dict__:

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from props import root, getNode
+from props import PropertyNode, root, getNode
 import props_xml
 import props_json
 
@@ -53,6 +53,11 @@ file = '/home/curt/Source/AuraUAS/aura-data/config/main-skywalker.xml'
 props_xml.load(file, config)
 props_xml.save("testing.xml", config)
 props_json.save("testing.json", config)
+newroot = PropertyNode()
+props_json.load("testing.json", newroot)
+print "pretty:"
+newroot.pretty_print()
+quit()
 
 print "sensor children:", sensors.getChildren()
 for child in sensors.getChildren():
