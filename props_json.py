@@ -9,6 +9,15 @@ from props import PropertyNode, root
 
 # internal dict() tree parsing routine
 def parseDict(pynode, newdict, basepath):
+    if 'include' in newdict:
+        # include file handling before anything else (follow up
+        # entries implicitely overwrite the include file values.)
+        if re.match('^/', newdict['include']):
+            file = newdict['include']
+        else:
+            file = os.path.join(basepath, newdict['include'])
+        print 'include:', file
+        load(file, pynode)
     for tag in newdict:
         if type(newdict[tag]) is dict:
             if not tag in pynode.__dict__:
@@ -28,15 +37,11 @@ def parseDict(pynode, newdict, basepath):
                     pynode.__dict__[tag].append(ele)
         elif type(newdict[tag]) is unicode:
             if tag == 'include':
-                # include file
-                if re.match('^/', newdict[tag]):
-                    file = newdict[tag]
-                else:
-                    file = os.path.join(basepath, newdict[tag])
-                print 'include:', file
-                load(file, pynode)
+                # already handled
+                pass
             else:
                 # normal case
+                print 'normal case:', tag, newdict[tag]
                 pynode.__dict__[tag] = newdict[tag]
         else:
             print 'skipping:', tag, type(newdict[tag])
@@ -47,7 +52,12 @@ def load(filename, pynode):
     print "loading:", filename
     try:
         f = open(filename, 'r')
-        newdict = json.load(f)
+        file = f.read()
+        # support // style comments in json files (by removing them
+        # before passing the file to the json parser)
+        file = re.sub('\n\s*//.*\n', '\n', file)
+        print file
+        newdict = json.loads(file)
         f.close()
     except:
         print filename + ": json load error:\n" + str(sys.exc_info()[1])

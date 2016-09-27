@@ -14,7 +14,7 @@ def _parseXML(pynode, xmlnode, basepath):
     if len(xmlnode) or 'include' in xmlnode.attrib:
         # has children
         newnode = PropertyNode()
-        if 'include' in xmlnode.attrib:
+        if False or 'include' in xmlnode.attrib:
             filename = basepath + '/' + xmlnode.attrib['include']
             print "calling load():", filename, xmlnode.attrib
             load(filename, newnode)
