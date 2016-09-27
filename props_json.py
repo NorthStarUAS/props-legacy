@@ -1,10 +1,11 @@
 # TODO: properly handle enumerated nodes
 
+import json
 import os.path
 import sys
 #import xml.etree.ElementTree as ET
 import lxml.etree as ET
-import json
+import re
 
 from props import PropertyNode, root
 
@@ -25,7 +26,47 @@ def parseDict(pynode, newdict, basepath):
                 else:
                     pynode.__dict__[tag].append(ele)
         elif type(newdict[tag]) is unicode:
-            pynode.__dict__[tag] = newdict[tag]
+            if tag == 'include':
+                # include file
+                if re.match('^/', newdict[tag]):
+                    file = newdict[tag]
+                else:
+                    file = os.path.join(basepath, newdict[tag])
+                print 'include:', file
+                load(file, pynode)
+            else:
+                # normal case
+                pynode.__dict__[tag] = newdict[tag]
+        else:
+            print 'skipping:', tag, type(newdict[tag])
+
+# internal dict() tree parsing routine
+def parseDictSimpleInclude(pynode, newdict, basepath):
+    for tag in newdict:
+        if type(newdict[tag]) is dict:
+            newnode = PropertyNode()
+            pynode.__dict__[tag] = newnode
+            parseDictSimpleInclude(newnode, newdict[tag], basepath)
+        elif type(newdict[tag]) is list:
+            pynode.__dict__[tag] = []
+            for ele in newdict[tag]:
+                if type(ele) is dict:
+                    newnode = PropertyNode()
+                    pynode.__dict__[tag].append(newnode)
+                    parseDictSimpleInclude(newnode, ele, basepath)
+                else:
+                    pynode.__dict__[tag].append(ele)
+        elif type(newdict[tag]) is unicode:
+            if re.match('include\s*=\s*', newdict[tag]):
+                # include file
+                file = basepath + re.sub('include\s*=\s*', '', newdict[tag])
+                print 'include:', file
+                newnode = PropertyNode()
+                pynode.__dict__[tag] = newnode
+                load(file, newnode)
+            else:
+                # normal case
+                pynode.__dict__[tag] = newdict[tag]
         else:
             print 'skipping:', tag, type(newdict[tag])
 
