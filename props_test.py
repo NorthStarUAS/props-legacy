@@ -2,6 +2,7 @@
 
 from props import root, getNode
 import props_xml
+import props_json
 
 # run the system through it's paces
 
@@ -48,9 +49,10 @@ root.pretty_print()
 print "alt_m:", root.sensors.gps[5].alt_m
 
 config = getNode('/', create=True)
-file = '/home/curt/Source/AuraUAS/aura-data/config/main-skywalker_01.xml'
+file = '/home/curt/Source/AuraUAS/aura-data/config/main-skywalker.xml'
 props_xml.load(file, config)
 props_xml.save("testing.xml", config)
+props_json.save("testing.json", config)
 
 print "sensor children:", sensors.getChildren()
 for child in sensors.getChildren():
