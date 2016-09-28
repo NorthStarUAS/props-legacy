@@ -38,9 +38,10 @@ def parseDict(pynode, newdict, basepath):
             file = newdict['include']
         else:
             file = os.path.join(basepath, newdict['include'])
-        print 'include:', file
+        # print 'include:', file
         load(file, pynode)
     for tag in newdict:
+        # print tag, type(newdict[tag])
         if type(newdict[tag]) is dict:
             if not tag in pynode.__dict__:
                 node = PropertyNode()
@@ -49,11 +50,22 @@ def parseDict(pynode, newdict, basepath):
                 node = pynode.__dict__[tag]
             parseDict(node, newdict[tag], basepath)
         elif type(newdict[tag]) is list:
-            pynode.__dict__[tag] = []
-            for ele in newdict[tag]:
+            if tag in pynode.__dict__:
+                # print 'tag exists:', type(pynode.__dict__[tag])
+                if type(pynode.__dict__[tag]) is list:
+                    pass
+                else:
+                    # promote single node to enumerated
+                    pynode.__dict__[tag] = [ pynode.__dict__[tag] ]
+            else:
+                pynode.__dict__[tag] = []
+            for i, ele in enumerate(newdict[tag]):
                 if type(ele) is dict:
-                    newnode = PropertyNode()
-                    pynode.__dict__[tag].append(newnode)
+                    if i < len(pynode.__dict__[tag]):
+                        newnode = pynode.__dict__[tag][i]
+                    else:
+                        newnode = PropertyNode()
+                        pynode.__dict__[tag].append(newnode)
                     parseDict(newnode, ele, basepath)
                 else:
                     pynode.__dict__[tag].append(mydecode(ele))
@@ -87,7 +99,7 @@ def load(filename, pynode):
         return
 
     path = os.path.dirname(filename)
-    print "path:", path
+    # print "path:", path
     parseDict(pynode, newdict, path)
 
 def buildDict(root, pynode):
