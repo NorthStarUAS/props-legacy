@@ -14,7 +14,7 @@ def _parseXML(pynode, xmlnode, basepath):
     if len(xmlnode) or 'include' in xmlnode.attrib:
         # has children
         newnode = PropertyNode()
-        if False or 'include' in xmlnode.attrib:
+        if 'include' in xmlnode.attrib:
             filename = basepath + '/' + xmlnode.attrib['include']
             print "calling load():", filename, xmlnode.attrib
             load(filename, newnode)
@@ -123,12 +123,12 @@ def _buildXML(xmlnode, pynode):
                     xmlchild.text = str(ele)
                     xmlnode.append(xmlchild)
    
-        elif type(child) is str:
+        elif type(child) is str or type(child) is unicode:
             xmlchild = ET.Element(child)
             xmlchild.text = str(node)
             xmlnode.append(xmlchild)
         else:
-            print "skipping:", child, ":", str(node)
+            print "xml build skipping:", child, ":", str(node)
         
 # save the property tree starting at pynode into an xml file.
 def save(filename, pynode=root):
