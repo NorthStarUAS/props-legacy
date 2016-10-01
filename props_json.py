@@ -96,11 +96,13 @@ def load(filename, pynode):
         f.close()
     except:
         print filename + ": json load error:\n" + str(sys.exc_info()[1])
-        return
+        return False
 
     path = os.path.dirname(filename)
     # print "path:", path
     parseDict(pynode, newdict, path)
+
+    return True
 
 def buildDict(root, pynode):
     for child in pynode.__dict__:
