@@ -11,16 +11,14 @@ def mydecode(value):
     #print 'mydecode:', value
     # test for int
     result = re.match('[-+]?\d+', value)
-    if result:
-        if result.group(0) == value:
-            #print 'int:', value
-            return int(value)
+    if result and result.group(0) == value:
+        #print 'int:', value
+        return int(value)
     # test for float
     result = re.match('[-+]?\d*\.\d+', value)
-    if result:
-        if result.group(0) == value:
-            #print 'float:', value
-            return float(value)
+    if result and result.group(0) == value:
+        #print 'float:', value
+        return float(value)
     # test for bool
     if value == 'True' or value == 'true':
         return True
