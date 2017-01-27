@@ -94,13 +94,14 @@ def load(filename, pynode):
         xml = ET.parse(filename)
     except:
         print filename + ": xml parse error:\n" + str(sys.exc_info()[1])
-        return
+        return False
 
     path = os.path.dirname(filename)
     print "path:", path
     xmlroot = xml.getroot()
     for child in xmlroot:
         _parseXML(pynode, child, path)
+    return True
 
 def _buildXML(xmlnode, pynode):
     for child in pynode.__dict__:
