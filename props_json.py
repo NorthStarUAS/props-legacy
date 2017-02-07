@@ -83,21 +83,26 @@ def parseDict(pynode, newdict, basepath):
 # supports "mytag": "include=relative_file_path.json"
 def load(filename, pynode):
     print "loading:", filename
+    path = os.path.dirname(filename)
     try:
         f = open(filename, 'r')
-        file = f.read()
-        # support // style comments in json files (by removing them
-        # before passing the file to the json parser)
-        file = re.sub('\s*//.*\n', '\n', file)
-        # print file
-        newdict = json.loads(file)
+        stream = f.read()
         f.close()
+        newdict = json.loads(stream)
     except:
         print filename + ": json load error:\n" + str(sys.exc_info()[1])
         return False
+    return loads(str, pynode, path)
 
-    path = os.path.dirname(filename)
-    # print "path:", path
+# load a json file and create a property tree rooted at the given node
+# supports "mytag": "include=relative_file_path.json"
+def loads(stream, pynode, path):
+    try:
+        stream = re.sub('\s*//.*\n', '\n', stream)
+        newdict = json.loads(stream)
+    except:
+        print "json load error:\n" + str(sys.exc_info()[1])
+        return False
     parseDict(pynode, newdict, path)
     return True
 
