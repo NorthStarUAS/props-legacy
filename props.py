@@ -30,10 +30,7 @@ import re
 
 class PropertyNode:
     def hasChild(self, name):
-        if name in self.__dict__:
-            return True
-        else:
-            return False
+        return name in self.__dict__
 
     def getChild(self, path, create=False):
         #print "getChild(" + path + ") create=" + str(create)
