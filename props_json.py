@@ -88,11 +88,10 @@ def load(filename, pynode):
         f = open(filename, 'r')
         stream = f.read()
         f.close()
-        newdict = json.loads(stream)
     except:
         print filename + ": json load error:\n" + str(sys.exc_info()[1])
         return False
-    return loads(str, pynode, path)
+    return loads(stream, pynode, path)
 
 # load a json file and create a property tree rooted at the given node
 # supports "mytag": "include=relative_file_path.json"
