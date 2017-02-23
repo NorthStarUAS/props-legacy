@@ -114,6 +114,12 @@ class PropertyNode:
         # return the last child node in the path
         return node
 
+    def isEnum(self, child):
+        if child in self.__dict__:
+            if type(self.__dict__[child]) is list:
+                return True
+        return False
+
     def getLen(self, child):
         if child in self.__dict__:
             if type(self.__dict__[child]) is list:
