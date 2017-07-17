@@ -122,7 +122,10 @@ def buildDict(root, pynode):
                     root[child].append( newdict )
                     buildDict(newdict, ele)
                 else:
-                    root[child].append(str(ele))
+                    if type(ele) is int or type(ele) is float:
+                        root[child].append(ele)
+                    else:
+                        root[child].append(str(ele))
    
         elif type(child) is str or type(child) is unicode:
             root[child] = str(node)
