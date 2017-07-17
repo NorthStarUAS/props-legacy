@@ -8,8 +8,10 @@ import re
 from props import PropertyNode, root
 
 def mydecode(value):
-    #print 'mydecode:', value
+    print 'mydecode:', type(value), value
     # test for int
+    if type(value) is int or type(value) is float:
+        return value
     result = re.match('[-+]?\d+', value)
     if result and result.group(0) == value:
         #print 'int:', value
