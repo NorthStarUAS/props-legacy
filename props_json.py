@@ -8,7 +8,7 @@ import re
 from props import PropertyNode, root
 
 def mydecode(value):
-    print 'mydecode:', type(value), value
+    # print 'mydecode:', type(value), value
     # test for int
     if type(value) is int or type(value) is float:
         return value
@@ -122,13 +122,17 @@ def buildDict(root, pynode):
                     root[child].append( newdict )
                     buildDict(newdict, ele)
                 else:
+                    # print 'build:', type(ele), str(ele)
                     if type(ele) is int or type(ele) is float:
                         root[child].append(ele)
                     else:
                         root[child].append(str(ele))
    
         elif type(child) is str or type(child) is unicode:
-            root[child] = str(node)
+            if type(node) is int or type(node) is float:
+                root[child] = node
+            else:
+                root[child] = str(node)
         else:
             print "json build skipping:", child, ":", str(node), type(child)
         
