@@ -69,7 +69,9 @@ def parseDict(pynode, newdict, basepath):
                     parseDict(newnode, ele, basepath)
                 else:
                     pynode.__dict__[tag].append(mydecode(ele))
-        elif type(newdict[tag]) is unicode:
+        elif type(newdict[tag]) is int \
+             or type(newdict[tag]) is float \
+             or type(newdict[tag]) is unicode:
             if tag == 'include':
                 # already handled
                 pass
