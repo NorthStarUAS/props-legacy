@@ -164,8 +164,8 @@ class PropertyNode:
                 for i in range(0, len(self.__dict__[child])):
                     name = child + '[' + str(i) + ']'
                     result.append(name)
-                else:
-                    result.append(child)    
+            else:
+                result.append(child)    
         return result
     
     def isLeaf(self, path):
