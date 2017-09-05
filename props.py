@@ -153,15 +153,20 @@ class PropertyNode:
         
     # return a list of children (attributes)
     def getChildren(self, expand=True):
-        result = []
+        # constructed the unexpanded list
+        pass1 = []
         for child in self.__dict__:
+            pass1.append(child)
+        # sort the pass1 list and expand if requested
+        result = []
+        for child in sorted(pass1):
             if expand and type(self.__dict__[child]) is list:
                 for i in range(0, len(self.__dict__[child])):
                     name = child + '[' + str(i) + ']'
                     result.append(name)
-            else:
-                result.append(child)    
-        return sorted(result)
+                else:
+                    result.append(child)    
+        return result
     
     def isLeaf(self, path):
         node = self.getChild(path)
