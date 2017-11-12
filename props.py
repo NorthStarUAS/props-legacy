@@ -241,6 +241,18 @@ class PropertyNode:
         self.extendEnumeratedNode(self.__dict__[name], index)
         self.__dict__[name][index] = int(val)
         
+    def setBoolEnum(self, name, index, val):
+        if not name in self.__dict__:
+            self.setLen(name, index, 0)            
+        self.extendEnumeratedNode(self.__dict__[name], index)
+        self.__dict__[name][index] = bool(val)
+        
+    def setStringEnum(self, name, index, val):
+        if not name in self.__dict__:
+            self.setLen(name, index, 0)            
+        self.extendEnumeratedNode(self.__dict__[name], index)
+        self.__dict__[name][index] = str(val)
+        
     def pretty_print(self, indent=""):
         for child in self.__dict__:
             node = self.__dict__[child]
