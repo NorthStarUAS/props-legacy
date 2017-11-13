@@ -28,271 +28,283 @@ Notes:
 
 import re
 
-class PropertyNode:
-    def hasChild(self, name):
-        return name in self.__dict__
+root = {}
 
-    def getChild(self, path, create=False):
-        #print "getChild(" + path + ") create=" + str(create)
-        if path.startswith('/'):
-            # require relative paths
-            print "Error: attempt to get child with absolute path name"
-            return None
-        if path.endswith('/'):
-            # we will strip this, but let's complain loudly because the
-            # caller is being sloppy.
-            print "WARNING: a sloppy coder has used a trailing / in a path:", path
-            path = path[:-1]
-        if re.match('-', path):
-            # require valid python variable names in path
-            print "Error: attempt to use '-' in property name"
-            return None
-        tokens = path.split('/');
-        #print "tokens:", tokens
-        node = self
-        for i, token in enumerate(tokens):
-            # test for enumerated form: ident[index]
-            parts = re.split('([\w-]+)\[(\d+)\]', token)
-            if len(parts) == 4:
-                token = parts[1]
-                index = int(parts[2])
+def setRoot(node):
+    #global root
+    #root = node
+    for tag in root.keys():
+        del root[tag]
+    for tag in node:
+        root[tag] = node[tag]
+    print root
+    
+def hasChild(node, name):
+    return name in node
+
+def getChild(start_node, path, create=False):
+    #print "getChild(" + path + ") create=" + str(create)
+    if path.startswith('/'):
+        # require relative paths
+        print "Error: attempt to get child with absolute path name"
+        return None
+    if path.endswith('/'):
+        # we will strip this, but let's complain loudly because the
+        # caller is being sloppy.
+        print "WARNING: a sloppy coder has used a trailing / in a path:", path
+        path = path[:-1]
+    if re.match('-', path):
+        # require valid python variable names in path
+        print "Error: attempt to use '-' in property name"
+        return None
+    tokens = path.split('/');
+    #print "tokens:", tokens
+    node = start_node
+    for i, token in enumerate(tokens):
+        # test for enumerated form: ident[index]
+        parts = re.split('([\w-]+)\[(\d+)\]', token)
+        if len(parts) == 4:
+            token = parts[1]
+            index = int(parts[2])
+        else:
+            index = None
+        if token in node:
+            #print "node exists:", token
+            # node exists
+            child = node[token]
+            child_type = type(child)
+            #print "type =", str(child_type)
+            if index == None:
+                if not child_type is list:
+                    # requested non-indexed node, and node is not indexed
+                    node = node[token]
+                else:
+                    # node is indexed use the first element
+                    node = node[token][0]
             else:
-                index = None
-            if token in node.__dict__:
-                #print "node exists:", token
-                # node exists
-                child = node.__dict__[token]
-                child_type = type(child)
-                #print "type =", str(child_type)
-                if index == None:
-                    if not child_type is list:
-                        # requested non-indexed node, and node is not indexed
-                        node = node.__dict__[token]
+                #print "requesting enumerated node"
+                # enumerated (list) node
+                if child_type is list and len(child) > index:
+                    node = child[index]
+                elif create:
+                    if child_type is list:
+                        # list is not large enough and create flag
+                        # requested: extend the list
+                        extendEnumeratedNode(child, index)
                     else:
-                        # node is indexed use the first element
-                        node = node.__dict__[token][0]
+                        # create on enumerated node, but not a
+                        # list yet
+                        save = child
+                        node[token] = [save]
+                        child = node[token]
+                        extendEnumeratedNode(child, index)
+                    node = child[index]
                 else:
-                    #print "requesting enumerated node"
-                    # enumerated (list) node
-                    if child_type is list and len(child) > index:
-                        node = child[index]
-                    elif create:
-                        if child_type is list:
-                            # list is not large enough and create flag
-                            # requested: extend the list
-                            self.extendEnumeratedNode(child, index)
-                        else:
-                            # create on enumerated node, but not a
-                            # list yet
-                            save = child
-                            node.__dict__[token] = [save]
-                            child = node.__dict__[token]
-                            self.extendEnumeratedNode(child, index)
-                        node = child[index]
-                    else:
-                        return None
-                if isinstance(node, PropertyNode) or type(node) is list:
-                    # ok
-                    pass
-                else:
-                    print "path:", token, "includes leaf nodes, sorry"
                     return None
-            elif create:
-                # node not found and create flag is true
-                if index == None:
-                    node.__dict__[token] = PropertyNode()
-                    node = node.__dict__[token]
-                else:
-                    # create node list and extend size as needed
-                    node.__dict__[token] = []
-                    tmp = node.__dict__[token]
-                    self.extendEnumeratedNode(tmp, index)
-                    node = tmp[index]
+            if type(node) is dict or type(node) is list:
+                # ok
+                pass
             else:
-                # requested node not found
+                print "path:", token, "includes leaf nodes, sorry"
                 return None
-        # return the last child node in the path
-        return node
-
-    def isEnum(self, child):
-        if child in self.__dict__:
-            if type(self.__dict__[child]) is list:
-                return True
-        return False
-
-    def getLen(self, child):
-        if child in self.__dict__:
-            if type(self.__dict__[child]) is list:
-                return len(self.__dict__[child])
+        elif create:
+            # node not found and create flag is true
+            if index == None:
+                node[token] = {}
+                node = node[token]
             else:
-                print "WARNING in getLen() path = ", child, " is not enumerated"
-                return 1
+                # create node list and extend size as needed
+                node[token] = []
+                extendEnumeratedNode(node[token], index)
+                node = node[token][index]
         else:
-            print "WARNING: request length of non-existant attribute:", child
-        return 0
+            # requested node not found
+            return None
+    # return the last child node in the path
+    return node
 
-    # make the specified node enumerated (if needed) and expand the
-    # length (if needed)
-    def setLen(self, child, size, init_val=None):
-        #print "called setLen()", child, size
-        if child in self.__dict__:
-            if not type(self.__dict__[child]) is list:
-                # convert existing element to element[0]
-                print "converting:", child, "to enumerated"
-                save = self.__dict__[child]
-                self.__dict__[child] = [save]
+def isEnum(self, child):
+    if child in self.__dict__:
+        if type(self.__dict__[child]) is list:
+            return True
+    return False
+
+def getLen(node, child):
+    if child in node:
+        if type(node[child]) is list:
+            return len(node[child])
         else:
-            #print "creating:", child
-            self.__dict__[child] = []
-        if init_val == None:
-            #print "extending branch nodes:", size
-            self.extendEnumeratedNode(self.__dict__[child], size-1)
-        else:
-            #print "extending leaf nodes:", size
-            self.extendEnumeratedLeaf(self.__dict__[child], size-1, init_val)
-        
-    # return a list of children (attributes)
-    def getChildren(self, expand=True):
+            print "WARNING in getLen() path:", child, " is not enumerated"
+            return 1
+    else:
+        print "WARNING: request length of non-existant attribute:", child
+    return 0
+
+# make the specified node enumerated (if needed) and expand the
+# length (if needed)
+def setLen(node, child, size, init_val=None):
+    #print "called setLen()", child, size
+    if child in node:
+        if not type(node[child]) is list:
+            # convert existing element to element[0]
+            print "converting:", child, "to enumerated"
+            save = node[child]
+            node[child] = [save]
+    else:
+        #print "creating:", child
+        node[child] = []
+    if init_val == None:
+        #print "extending branch nodes:", size
+        extendEnumeratedNode(node[child], size-1)
+    else:
+        #print "extending leaf nodes:", size
+        extendEnumeratedLeaf(node[child], size-1, init_val)
+
+# return a list of children (attributes)
+def getChildren(node, expand=True):
+    result = []
+    if node != None:
         # constructed the unexpanded list
         pass1 = []
-        for child in self.__dict__:
+        for child in node:
             pass1.append(child)
         # sort the pass1 list and expand if requested
-        result = []
         for child in sorted(pass1):
-            if expand and type(self.__dict__[child]) is list:
-                for i in range(0, len(self.__dict__[child])):
+            if expand and type(node[child]) is list:
+                for i in range(0, len(node[child])):
                     name = child + '[' + str(i) + ']'
                     result.append(name)
             else:
                 result.append(child)    
-        return result
-    
-    def isLeaf(self, path):
-        node = self.getChild(path)
-        return not isinstance(node, PropertyNode)
+    return result
 
-    def getFloat(self, name):
-        if name in self.__dict__:
-            return float(self.__dict__[name])
-        else:
-            return 0.0
-            
-    def getInt(self, name):
-        if name in self.__dict__:
-            return int(self.__dict__[name])
-        else:
-            return 0
+def isLeaf(node, tag):
+    if tag in node:
+        return not type(node[tag]) is dict
+    else:
+        return False
 
-    def getBool(self, name):
-        if name in self.__dict__:
-            return bool(self.__dict__[name])
-        else:
-            return False
+def getFloat(self, name):
+    if name in self.__dict__:
+        return float(self.__dict__[name])
+    else:
+        return 0.0
 
-    def getString(self, name):
-        if name in self.__dict__:
-            return str(self.__dict__[name])
-        else:
-            return ""
+def getInt(self, name):
+    if name in self.__dict__:
+        return int(self.__dict__[name])
+    else:
+        return 0
 
-    def getFloatEnum(self, name, index):
-        if name in self.__dict__:
-            self.extendEnumeratedNode(self.__dict__[name], index)
-            return float(self.__dict__[name][index])
-        else:
-            return 0.0
-            
-    def getIntEnum(self, name, index):
-        if name in self.__dict__:
-            self.extendEnumeratedNode(self.__dict__[name], index)
-            return int(self.__dict__[name][index])
-        else:
-            return 0.0
-            
-    def getStringEnum(self, name, index):
-        if name in self.__dict__:
-            self.extendEnumeratedNode(self.__dict__[name], index)
-            return str(self.__dict__[name][index])
-        else:
-            return ""
-            
-    def setFloat(self, name, val):
-        self.__dict__[name] = float(val)
-            
-    def setInt(self, name, val):
-        self.__dict__[name] = int(val)
-            
-    def setBool(self, name, val):
-        self.__dict__[name] = bool(val)
-            
-    def setString(self, name, val):
-        self.__dict__[name] = str(val)
+def getBool(self, name):
+    if name in self.__dict__:
+        return bool(self.__dict__[name])
+    else:
+        return False
 
-    def setFloatEnum(self, name, index, val):
-        if not name in self.__dict__:
-            self.setLen(name, index, 0.0)            
+def getString(self, name):
+    if name in self.__dict__:
+        return str(self.__dict__[name])
+    else:
+        return ""
+
+def getFloatEnum(self, name, index):
+    if name in self.__dict__:
         self.extendEnumeratedNode(self.__dict__[name], index)
-        self.__dict__[name][index] = val
-        
-    def setIntEnum(self, name, index, val):
-        if not name in self.__dict__:
-            self.setLen(name, index, 0)            
+        return float(self.__dict__[name][index])
+    else:
+        return 0.0
+
+def getIntEnum(self, name, index):
+    if name in self.__dict__:
         self.extendEnumeratedNode(self.__dict__[name], index)
-        self.__dict__[name][index] = int(val)
-        
-    def setBoolEnum(self, name, index, val):
-        if not name in self.__dict__:
-            self.setLen(name, index, 0)            
+        return int(self.__dict__[name][index])
+    else:
+        return 0.0
+
+def getStringEnum(self, name, index):
+    if name in self.__dict__:
         self.extendEnumeratedNode(self.__dict__[name], index)
-        self.__dict__[name][index] = bool(val)
-        
-    def setStringEnum(self, name, index, val):
-        if not name in self.__dict__:
-            self.setLen(name, index, 0)            
-        self.extendEnumeratedNode(self.__dict__[name], index)
-        self.__dict__[name][index] = str(val)
-        
-    def pretty_print(self, indent=""):
-        for child in self.__dict__:
-            node = self.__dict__[child]
-            if isinstance(node, PropertyNode):
-                print indent + "/" + child
-                node.pretty_print(indent + "  ")
-            elif type(node) is list:
-                #print "child is list:", str(node)
-                for i, ele in enumerate(node):
-                    # print i, str(ele)
-                    if isinstance(ele, PropertyNode):
-                        print indent + "/" + child + "[" + str(i) + "]:"
-                        ele.pretty_print(indent + "  ")
-                    else:
-                        print indent + str(child) + "[" + str(i) + "]:",
-                        print str(ele)
-            else:
-                print indent + str(child) + ":",
-                print str(node)
-        
-    def extendEnumeratedNode(self, node, index):
-        for i in range(len(node), index+1):
-            # print "branch appending:", i
-            node.append( PropertyNode() )
+        return str(self.__dict__[name][index])
+    else:
+        return ""
+
+def setFloat(self, name, val):
+    self.__dict__[name] = float(val)
+
+def setInt(self, name, val):
+    self.__dict__[name] = int(val)
+
+def setBool(self, name, val):
+    self.__dict__[name] = bool(val)
+
+def setString(self, name, val):
+    self.__dict__[name] = str(val)
+
+def setFloatEnum(self, name, index, val):
+    if not name in self.__dict__:
+        self.setLen(name, index, 0.0)            
+    self.extendEnumeratedNode(self.__dict__[name], index)
+    self.__dict__[name][index] = val
+
+def setIntEnum(self, name, index, val):
+    if not name in self.__dict__:
+        self.setLen(name, index, 0)            
+    self.extendEnumeratedNode(self.__dict__[name], index)
+    self.__dict__[name][index] = int(val)
+
+def setBoolEnum(self, name, index, val):
+    if not name in self.__dict__:
+        self.setLen(name, index, 0)            
+    self.extendEnumeratedNode(self.__dict__[name], index)
+    self.__dict__[name][index] = bool(val)
+
+def setStringEnum(self, name, index, val):
+    if not name in self.__dict__:
+        self.setLen(name, index, 0)            
+    self.extendEnumeratedNode(self.__dict__[name], index)
+    self.__dict__[name][index] = str(val)
+
+def pretty_print(start_node, indent=""):
+    for child in start_node:
+        node = start_node[child]
+        if type(node) is dict:
+            print indent + "/" + child
+            pretty_print(node, indent + "  ")
+        elif type(node) is list:
+            #print "child is list:", str(node)
+            for i, ele in enumerate(node):
+                # print i, str(ele)
+                if type(ele) is dict:
+                    print indent + "/" + child + "[" + str(i) + "]:"
+                    pretty_print(ele, indent + "  ")
+                else:
+                    print indent + str(child) + "[" + str(i) + "]:",
+                    print str(ele)
+        else:
+            print indent + str(child) + ":",
+            print str(node)
+
+def extendEnumeratedNode(node, index):
+    for i in range(len(node), index+1):
+        # print "branch appending:", i
+        node.append( {} )
+
+def extendEnumeratedLeaf(node, index, init_val):
+    for i in range(len(node), index+1):
+        # print "leaf appending:", i, "=", init_val
+        node.append( init_val )
             
-    def extendEnumeratedLeaf(self, node, index, init_val):
-        for i in range(len(node), index+1):
-            # print "leaf appending:", i, "=", init_val
-            node.append( init_val )
-            
         
-root = PropertyNode()
 
 # return/create a node relative to the shared root property node
 def getNode(path, create=False):
     #print "getNode(" + path + ") create=" + str(create)
     if path[:1] != '/':
         # require leading /
+        print "Error: getNode() requires a full path name"
         return None
     elif path == "/":
         # catch trivial case
         return root
-    return root.getChild(path[1:], create)
+    return getChild(root, path[1:], create)
