@@ -43,24 +43,32 @@ def hasChild(node, name):
     return name in node
 
 def getChild(start_node, path, create=False):
-    #print "getChild(" + path + ") create=" + str(create)
+    print "getChild(" + path + ") create=" + str(create)
     if path.startswith('/'):
         # require relative paths
         print "Error: attempt to get child with absolute path name"
         return None
+    print 'ok1'
     if path.endswith('/'):
         # we will strip this, but let's complain loudly because the
         # caller is being sloppy.
         print "WARNING: a sloppy coder has used a trailing / in a path:", path
         path = path[:-1]
-    if re.match('-', path):
-        # require valid python variable names in path
-        print "Error: attempt to use '-' in property name"
-        return None
+    print 'ok2:', path, type(path)
+    #prog = re.compile('-')
+    #if prog.match(str(path)):
+    #    # require valid python variable names in path
+    #    print "Error: attempt to use '-' in property name"
+    #    return None
+    print 'ok3'
+    print 'path:', path
     tokens = path.split('/');
-    #print "tokens:", tokens
+    print "tokens:", tokens
     node = start_node
+    print 'node:', node
+    return None
     for i, token in enumerate(tokens):
+        print '  token:', token
         # test for enumerated form: ident[index]
         parts = re.split('([\w-]+)\[(\d+)\]', token)
         if len(parts) == 4:
@@ -121,6 +129,7 @@ def getChild(start_node, path, create=False):
             # requested node not found
             return None
     # return the last child node in the path
+    print 'getChild():', node
     return node
 
 def isEnum(self, child):
@@ -299,7 +308,7 @@ def extendEnumeratedLeaf(node, index, init_val):
 
 # return/create a node relative to the shared root property node
 def getNode(path, create=False):
-    #print "getNode(" + path + ") create=" + str(create)
+    print "getNode(" + path + ") create=" + str(create)
     if path[:1] != '/':
         # require leading /
         print "Error: getNode() requires a full path name"
