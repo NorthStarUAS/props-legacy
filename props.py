@@ -55,29 +55,41 @@ def getChild(start_node, path, create=False):
         print "WARNING: a sloppy coder has used a trailing / in a path:", path
         path = path[:-1]
     print 'ok2:', path, type(path)
-    #prog = re.compile('-')
-    #if prog.match(str(path)):
-    #    # require valid python variable names in path
-    #    print "Error: attempt to use '-' in property name"
-    #    return None
+    # prog = re.compile('-')
+    # if prog.match(str(path)):
+    #     # require valid python variable names in path
+    #     print "Error: attempt to use '-' in property name"
+    #     return None
     print 'ok3'
     print 'path:', path
     tokens = path.split('/');
     print "tokens:", tokens
     node = start_node
-    print 'node:', node
-    return None
     for i, token in enumerate(tokens):
         print '  token:', token
-        # test for enumerated form: ident[index]
-        parts = re.split('([\w-]+)\[(\d+)\]', token)
-        if len(parts) == 4:
-            token = parts[1]
-            index = int(parts[2])
+        if False:
+            # test for enumerated form: ident[index]
+            parts = re.split('([\w-]+)\[(\d+)\]', token)
+            if len(parts) == 4:
+                token = parts[1]
+                index = int(parts[2])
+            else:
+                index = None
         else:
             index = None
+            parts = token.split('[')
+            print 'parts1:', parts
+            if len(parts) > 1:
+                token = parts[0]
+                parts = parts[1].split(']')
+                print 'parts2:', parts
+                if len(parts) > 1:
+                    index = int(parts[0])
+            else:
+                index = None
+        print 'ok4'
         if token in node:
-            #print "node exists:", token
+            print "node exists:", token
             # node exists
             child = node[token]
             child_type = type(child)
@@ -108,6 +120,7 @@ def getChild(start_node, path, create=False):
                         extendEnumeratedNode(child, index)
                     node = child[index]
                 else:
+                    print 'returning None, no create flag given'
                     return None
             if type(node) is dict or type(node) is list:
                 # ok
@@ -116,7 +129,7 @@ def getChild(start_node, path, create=False):
                 print "path:", token, "includes leaf nodes, sorry"
                 return None
         elif create:
-            # node not found and create flag is true
+            print 'node not found and create flag is true'
             if index == None:
                 node[token] = {}
                 node = node[token]
@@ -125,10 +138,13 @@ def getChild(start_node, path, create=False):
                 node[token] = []
                 extendEnumeratedNode(node[token], index)
                 node = node[token][index]
+            print 'ok5'
         else:
+            print 'node not found ...'
             # requested node not found
             return None
     # return the last child node in the path
+    print 'ok6'
     print 'getChild():', node
     return node
 
@@ -303,8 +319,6 @@ def extendEnumeratedLeaf(node, index, init_val):
     for i in range(len(node), index+1):
         # print "leaf appending:", i, "=", init_val
         node.append( init_val )
-            
-        
 
 # return/create a node relative to the shared root property node
 def getNode(path, create=False):

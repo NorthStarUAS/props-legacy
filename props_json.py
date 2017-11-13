@@ -10,8 +10,8 @@ from props import root, setRoot, setLen, pretty_print
 # recursive overlay of two dictionaries (for overriding includes trees
 # in json)
 def overlayDict(base, overlay):
-    print 'base:', base
-    print 'overlay:', overlay
+    # print 'base:', base
+    # print 'overlay:', overlay
     for tag in overlay:
         if type(overlay[tag]) is dict:
             if tag in base:
@@ -20,7 +20,6 @@ def overlayDict(base, overlay):
                 base[tag] = overlay[tag]
         elif type(overlay[tag]) is list:
             setLen(base, tag, len(overlay[tag]))
-            print 'base:', base[tag], 'overlay:', overlay[tag]
             for i in range(len(overlay[tag])):
                 if type(overlay[tag][i]) is dict:
                     overlayDict(base[tag][i], overlay[tag][i])
@@ -42,8 +41,8 @@ def parseDict(newdict, basepath):
         # print 'include:', file
         include = load(file)
         overlayDict(include, newdict)
-        print 'pretty', file
-        pretty_print(include)
+        #print 'pretty', file
+        #pretty_print(include)
         for tag in include:
             newdict[tag] = include[tag]
         del newdict['include']
