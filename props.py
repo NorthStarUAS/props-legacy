@@ -93,7 +93,7 @@ def getChild(start_node, path, create=False):
             # node exists
             child = node[token]
             child_type = type(child)
-            #print "type =", str(child_type)
+            print "type =", str(child_type)
             if index == None:
                 if not child_type is list:
                     # requested non-indexed node, and node is not indexed
@@ -145,7 +145,6 @@ def getChild(start_node, path, create=False):
             return None
     # return the last child node in the path
     print 'ok6'
-    print 'getChild():', node
     return node
 
 def isEnum(self, child):
@@ -215,15 +214,15 @@ def getFloat(self, name):
     else:
         return 0.0
 
-def getInt(self, name):
-    if name in self.__dict__:
-        return int(self.__dict__[name])
+def getInt(node, name):
+    if name in node:
+        return int(node[name])
     else:
         return 0
 
-def getBool(self, name):
-    if name in self.__dict__:
-        return bool(self.__dict__[name])
+def getBool(node, name):
+    if name in node:
+        return bool(node[name])
     else:
         return False
 
@@ -330,4 +329,6 @@ def getNode(path, create=False):
     elif path == "/":
         # catch trivial case
         return root
-    return getChild(root, path[1:], create)
+    result = getChild(root, path[1:], create)
+    print 'getNode():', path, result
+    return result
