@@ -26,6 +26,7 @@ Notes:
 
 """
 
+from __future__ import print_function
 import re
 
 class PropertyNode:
@@ -36,16 +37,16 @@ class PropertyNode:
         #print "getChild(" + path + ") create=" + str(create)
         if path.startswith('/'):
             # require relative paths
-            print "Error: attempt to get child with absolute path name"
+            print("Error: attempt to get child with absolute path name")
             return None
         if path.endswith('/'):
             # we will strip this, but let's complain loudly because the
             # caller is being sloppy.
-            print "WARNING: a sloppy coder has used a trailing / in a path:", path
+            print("WARNING: a sloppy coder has used a trailing / in a path:", path)
             path = path[:-1]
         if re.match('-', path):
             # require valid python variable names in path
-            print "Error: attempt to use '-' in property name"
+            print("Error: attempt to use '-' in property name")
             return None
         tokens = path.split('/');
         #print "tokens:", tokens
@@ -95,7 +96,7 @@ class PropertyNode:
                     # ok
                     pass
                 else:
-                    print "path:", token, "includes leaf nodes, sorry"
+                    print("path:", token, "includes leaf nodes, sorry")
                     return None
             elif create:
                 # node not found and create flag is true
@@ -125,10 +126,10 @@ class PropertyNode:
             if type(self.__dict__[child]) is list:
                 return len(self.__dict__[child])
             else:
-                print "WARNING in getLen() path = ", child, " is not enumerated"
+                print("WARNING in getLen() path = ", child, " is not enumerated")
                 return 1
         else:
-            print "WARNING: request length of non-existant attribute:", child
+            print("WARNING: request length of non-existant attribute:", child)
         return 0
 
     # make the specified node enumerated (if needed) and expand the
@@ -138,7 +139,7 @@ class PropertyNode:
         if child in self.__dict__:
             if not type(self.__dict__[child]) is list:
                 # convert existing element to element[0]
-                print "converting:", child, "to enumerated"
+                print("converting:", child, "to enumerated")
                 save = self.__dict__[child]
                 self.__dict__[child] = [save]
         else:
@@ -257,21 +258,21 @@ class PropertyNode:
         for child in self.__dict__:
             node = self.__dict__[child]
             if isinstance(node, PropertyNode):
-                print indent + "/" + child
+                print(indent + "/" + child)
                 node.pretty_print(indent + "  ")
             elif type(node) is list:
                 #print "child is list:", str(node)
                 for i, ele in enumerate(node):
                     # print i, str(ele)
                     if isinstance(ele, PropertyNode):
-                        print indent + "/" + child + "[" + str(i) + "]:"
+                        print(indent + "/" + child + "[" + str(i) + "]:")
                         ele.pretty_print(indent + "  ")
                     else:
-                        print indent + str(child) + "[" + str(i) + "]:",
-                        print str(ele)
+                        print(indent + str(child) + "[" + str(i) + "]:",)
+                        print(str(ele))
             else:
-                print indent + str(child) + ":",
-                print str(node)
+                print(indent + str(child) + ": ", end='')
+                print(str(node))
         
     def extendEnumeratedNode(self, node, index):
         for i in range(len(node), index+1):

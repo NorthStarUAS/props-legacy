@@ -7,6 +7,12 @@ import re
 
 from props import PropertyNode, root
 
+if (sys.version_info > (3, 0)):
+    # dummy unicode type (never used in python3) to make the code
+    # happy in both python 2 and 3 environments.
+    class unicode():
+        pass
+    
 def mydecode(value):
     # print 'mydecode:', type(value), value
     # test for int
@@ -71,6 +77,7 @@ def parseDict(pynode, newdict, basepath):
                     pynode.__dict__[tag].append(mydecode(ele))
         elif type(newdict[tag]) is int \
              or type(newdict[tag]) is float \
+             or type(newdict[tag]) is str \
              or type(newdict[tag]) is unicode:
             if tag == 'include':
                 # already handled
@@ -81,19 +88,19 @@ def parseDict(pynode, newdict, basepath):
                 mydecode(newdict[tag])
                 pynode.__dict__[tag] = mydecode(newdict[tag])
         else:
-            print 'json parse skipping:', tag, type(newdict[tag])
+            print('json parse skipping:', tag, type(newdict[tag]))
                 
 # load a json file and create a property tree rooted at the given node
 # supports "mytag": "include=relative_file_path.json"
 def load(filename, pynode):
-    print "loading:", filename
+    print("loading:", filename)
     path = os.path.dirname(filename)
     try:
         f = open(filename, 'r')
         stream = f.read()
         f.close()
     except:
-        print filename + ": json load error:\n" + str(sys.exc_info()[1])
+        print(filename + ": json load error:\n" + str(sys.exc_info()[1]))
         return False
     return loads(stream, pynode, path)
 
@@ -104,7 +111,7 @@ def loads(stream, pynode, path):
         stream = re.sub('\s*//.*\n', '\n', stream)
         newdict = json.loads(stream)
     except:
-        print "json load error:\n" + str(sys.exc_info()[1])
+        print("json load error:\n" + str(sys.exc_info()[1]))
         return False
     parseDict(pynode, newdict, path)
     return True
@@ -136,7 +143,7 @@ def buildDict(root, pynode):
             else:
                 root[child] = str(node)
         else:
-            print "json build skipping:", child, ":", str(node), type(child)
+            print("json build skipping:", child, ":", str(node), type(child))
         
 # save the property tree starting at pynode into a json xml file.
 def save(filename, pynode=root):
@@ -147,5 +154,5 @@ def save(filename, pynode=root):
         json.dump(root, f, indent=4, sort_keys=True)
         f.close()
     except:
-        print filename + ": json save error:\n" + str(sys.exc_info()[1])
+        print(filename + ": json save error:\n" + str(sys.exc_info()[1]))
         return
