@@ -268,7 +268,7 @@ class PropertyNode:
                         print(indent + "/" + child + "[" + str(i) + "]:")
                         ele.pretty_print(indent + "  ")
                     else:
-                        print(indent + str(child) + "[" + str(i) + "]:",)
+                        print(indent + str(child) + "[" + str(i) + "]: ", end='')
                         print(str(ele))
             else:
                 print(indent + str(child) + ": ", end='')

@@ -92,8 +92,9 @@ def parseDict(pynode, newdict, basepath):
                 
 # load a json file and create a property tree rooted at the given node
 # supports "mytag": "include=relative_file_path.json"
-def load(filename, pynode):
-    print("loading:", filename)
+def load(filename, pynode, verbose=False):
+    if verbose:
+        print("loading:", filename)
     path = os.path.dirname(filename)
     try:
         f = open(filename, 'r')
