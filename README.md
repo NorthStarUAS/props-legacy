@@ -22,18 +22,18 @@ install and the C library install)
 
 ### Part 1
 
-  $ cd python
-  $ sudo python3 ./setup.py install
+    $ cd python
+    $ sudo python3 ./setup.py install
 
 ### Part 2
 
-  $ cd ../library
-  $ ./autogen.sh
-  $ mkdir build
-  $ cd build
-  $ ../configure CFLAGS="-Wall -O3" CXXFLAGS="-Wall -O3"
-  $ make
-  $ sudo make install
+    $ cd ../library
+    $ ./autogen.sh
+    $ mkdir build
+    $ cd build
+    $ ../configure CFLAGS="-Wall -O3" CXXFLAGS="-Wall -O3"
+    $ make
+    $ sudo make install
 
 
 ## Background
