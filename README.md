@@ -15,6 +15,27 @@ all modules in the application.  It assumes some basic cooperation and
 rule following between modules, but there are many very nice outcomes
 to this approach.
 
+## Quick Installation Guide
+
+Please notice there is two parts to the install process (the python
+install and the C library install)
+
+### Part 1
+
+$ cd python
+$ sudo python3 ./setup.py install
+
+### Part 2
+
+$ cd ../library
+$ ./autogen.sh
+$ mkdir build
+$ cd build
+$ ../configure CFLAGS="-Wall -O3" CXXFLAGS="-Wall -O3"
+$ make
+$ sudo make install
+
+
 ## Background
 
 Every non-trivial program needs a way to share data between modules.
