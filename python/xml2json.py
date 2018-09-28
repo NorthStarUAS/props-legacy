@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from props import PropertyNode, root, getNode
 import props_xml

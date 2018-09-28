@@ -34,7 +34,7 @@ class PropertyNode:
         return name in self.__dict__
 
     def getChild(self, path, create=False):
-        #print "getChild(" + path + ") create=" + str(create)
+        # print("getChild():", path, "create:", create)
         if path.startswith('/'):
             # require relative paths
             print("Error: attempt to get child with absolute path name")
@@ -99,7 +99,7 @@ class PropertyNode:
                     print("path:", token, "includes leaf nodes, sorry")
                     return None
             elif create:
-                # node not found and create flag is true
+                # print('node not found and create flag is true')
                 if index == None:
                     node.__dict__[token] = PropertyNode()
                     node = node.__dict__[token]
@@ -289,7 +289,7 @@ root = PropertyNode()
 
 # return/create a node relative to the shared root property node
 def getNode(path, create=False):
-    #print "getNode(" + path + ") create=" + str(create)
+    #print("getNode():", path, "create:", str(create))
     if path[:1] != '/':
         # require leading /
         return None

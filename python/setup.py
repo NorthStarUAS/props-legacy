@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 from distutils.core import setup
 
@@ -8,7 +8,5 @@ setup(name='props.py',
       author='Curtis L. Olson',
       author_email='curtolson@flightgear.org',
       url='https://github.com/AuraUAS',
-      py_modules=['props', 'props_json', 'props_xml'],
-      #packages=['distutils', 'distutils.command'],
-      #scripts=['props.py']
+      py_modules=['props', 'props_json', 'props_xml']
      )
