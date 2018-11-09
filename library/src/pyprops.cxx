@@ -219,14 +219,14 @@ double pyPropertyNode::PyObject2Double(const char *name, PyObject *pAttr) {
 		if ( PyErr_Occurred() ) PyErr_Print();
 		printf("WARNING: conversion from string to float failed\n");
 		PyObject *pStr = PyObject_Str(pAttr);
-		char *s = PyUnicode_AsUTF8(pStr);
+		const char *s = PyUnicode_AsUTF8(pStr);
 		printf("  %s='%s'\n", name, s);
 		Py_DECREF(pStr);
 	    }
 	} else {
 	    printf("Unknown object type: '%s' ", pObj->ob_type->tp_name);
 	    PyObject *pStr = PyObject_Str(pObj);
-	    char *s = PyUnicode_AsUTF8(pStr);
+	    const char *s = PyUnicode_AsUTF8(pStr);
 	    printf("  %s='%s'\n", name, s);
 	    Py_DECREF(pStr);
 	}
@@ -251,14 +251,14 @@ long pyPropertyNode::PyObject2Long(const char *name, PyObject *pAttr) {
 		if ( PyErr_Occurred() ) PyErr_Print();
 		printf("WARNING: conversion from string to long failed\n");
 		PyObject *pStr = PyObject_Str(pAttr);
-		char *s = PyUnicode_AsUTF8(pStr);
+		const char *s = PyUnicode_AsUTF8(pStr);
 		printf("  %s='%s'\n", name, s);
 		Py_DECREF(pStr);
 	    }
 	} else {
 	    printf("Unknown object type: '%s' ", pAttr->ob_type->tp_name);
 	    PyObject *pStr = PyObject_Str(pAttr);
-	    char *s = PyUnicode_AsUTF8(pStr);
+	    const char *s = PyUnicode_AsUTF8(pStr);
 	    printf("  %s='%s'\n", name, s);
 	    Py_DECREF(pStr);
 	}
