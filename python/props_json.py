@@ -157,3 +157,24 @@ def save(filename, pynode=root):
     except:
         print(filename + ": json save error:\n" + str(sys.exc_info()[1]))
         return
+
+# copy/overlay/update the source tree over the existing tree.  Will
+# add and update values in the existing tree, non-matching values will
+# not be touched (nothing is deleted from the detstination tree.)
+def overlay(dest_node, src_node):
+    for child in src_node.getChildren(expand=False):
+        if src_node.isEnum(child):
+            # print(child, src_node.getLen(child))
+            for i in range(src_node.getLen(child)):
+                dest_node.setFloatEnum(child, i, src_node.getFloatEnum(child, i))
+        else:
+            # print(child, type(src_node.__dict__[child]))
+            child_type = type(src_node.__dict__[child])
+            if child_type is float:
+                dest_node.setFloat(child, src_node.getFloat(child))
+            elif child_type is int:
+                dest_node.setInt(child, src_node.getInt(child))
+            elif child_type is str:
+                dest_node.setString(child, src_node.getString(child))
+            else:
+                print('Unknown child type:', child, child_type)
