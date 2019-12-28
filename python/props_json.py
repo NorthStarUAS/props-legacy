@@ -59,7 +59,8 @@ def parseDict(pynode, newdict, basepath):
             if tag in pynode.__dict__:
                 # print 'tag exists:', type(pynode.__dict__[tag])
                 if type(pynode.__dict__[tag]) is list:
-                    pass
+		    # completely overwrite whatever was there
+                    pynode.__dict__[tag] = []
                 else:
                     # promote single node to enumerated
                     pynode.__dict__[tag] = [ pynode.__dict__[tag] ]
