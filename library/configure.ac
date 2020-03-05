@@ -8,7 +8,7 @@ dnl Initialize the autoconf system (provide project name and version)
 AC_INIT([pyprops], [1.1])
 
 dnl Sanity check of the distribution
-AC_CONFIG_SRCDIR([src/pyprops.hxx])
+AC_CONFIG_SRCDIR([src/pyprops.h])
 
 dnl Initialize the automake system
 AM_INIT_AUTOMAKE

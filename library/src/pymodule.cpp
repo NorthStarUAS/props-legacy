@@ -1,4 +1,4 @@
-#include "pymodule.hxx"
+#include "pymodule.h"
 
 pyModuleBase::pyModuleBase():
     pModuleObj(NULL),

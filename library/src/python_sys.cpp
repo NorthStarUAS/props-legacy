@@ -1,4 +1,4 @@
-#include "python_sys.hxx"
+#include "python_sys.h"
 
 #include <sstream>
 #include <string>

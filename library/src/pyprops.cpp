@@ -2,7 +2,7 @@
  * C++ interface to a python PropertyNode()
  */
 
-#include "pyprops.hxx"
+#include "pyprops.h"
 
 #include <string>
 #include <sstream>
