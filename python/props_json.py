@@ -43,7 +43,7 @@ def parseDict(pynode, newdict, basepath):
         if re.match('^/', newdict['include']):
             file = newdict['include']
         elif re.match('^~', newdict['include']):
-            file = os.path.expandusers(newdict['include'])
+            file = os.path.expanduser(newdict['include'])
         else:
             file = os.path.join(basepath, newdict['include'])
         # print 'include:', file
