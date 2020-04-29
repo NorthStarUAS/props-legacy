@@ -126,7 +126,7 @@ class PropertyNode:
             if type(self.__dict__[child]) is list:
                 return len(self.__dict__[child])
             else:
-                print("WARNING in getLen() path = ", child, " is not enumerated")
+                print("WARNING in getLen() path =", child, " is not enumerated")
                 return 1
         else:
             print("WARNING: request length of non-existant attribute:", child)

@@ -42,6 +42,8 @@ def parseDict(pynode, newdict, basepath):
         # entries implicitely overwrite the include file values.)
         if re.match('^/', newdict['include']):
             file = newdict['include']
+        elif re.match('^~', newdict['include']):
+            file = os.path.expandusers(newdict['include'])
         else:
             file = os.path.join(basepath, newdict['include'])
         # print 'include:', file
