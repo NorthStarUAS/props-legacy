@@ -56,8 +56,8 @@ dnl check for default libraries
 # To make the build more straight forward (hopefully) on cross compiled
 # devel environments, hard code the libpython libraries
 # you can use python3-config --includes --libs to find this info
-PYTHON_INCLUDES="-I/usr/include/python3.7m"
-PYTHON_LIBS="-lpython3.7m"
+PYTHON_INCLUDES="-I/usr/include/python3.9"
+PYTHON_LIBS="-lpython3.9"
 AC_SUBST(PYTHON_INCLUDES)
 AC_SUBST(PYTHON_LIBS)
 

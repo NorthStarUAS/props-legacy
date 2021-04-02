@@ -10,7 +10,7 @@ libpyprops_a_SOURCES = \
         pyprops.cpp \
         python_sys.cpp
 
-AM_CPPFLAGS = $(PYTHON_INCLUDES)
+AM_CPPFLAGS = $(PYTHON_INCLUDES) -fPIC
 
 noinst_PROGRAMS = props_test
 
