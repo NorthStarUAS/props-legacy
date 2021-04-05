@@ -1,12 +1,12 @@
-# aura-props
+# rc-props
 
-Aura-props is a pure python "property tree" system for convenient
+rc-props is a pure python "property tree" system for convenient
 organization and sharing of data between code modules.
 
-Aura-core (available separately) includes a C++ interface so that the
-property tree can also serve as a simple mechanism for sharing data
-between mixed python/C++ modules (without needing to run the gauntlet
-of the very tricky python API.)
+This package includes a C++ interface so that the property tree can
+also serve as a simple mechanism for sharing data between mixed Python
+and C++ modules (without needing to run the gauntlet of the very
+tricky python API.)
 
 Traditionally code modules pass data through a rigid (and often
 brittle or clunky) API defined by each module.  The property tree
@@ -58,8 +58,8 @@ There are times when it makes the most sense to share data globally
 within your application. It just does.  (Sometimes it still makes
 sense to use a goto.)
 
-Aura-props provides a way to create shared data space within your
-application in a friendly and well structured way.  With aura-props as
+rc-props provides a way to create shared data space within your
+application in a friendly and well structured way.  With rc-props as
 the backbone of your application, you receive many additional nice
 services and structures.
 
@@ -101,7 +101,7 @@ but in the right context it is super awesome.
 
 ## The Property Tree
 
-The aura-props module enables an application to easily build a tree of
+The rc-props module enables an application to easily build a tree of
 important data to be shared throughout the program.  There is a single
 shared 'root' node that is automatically created when the props module
 is imported.  From there an application can start filling in the tree

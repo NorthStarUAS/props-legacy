@@ -49,12 +49,12 @@ root.pretty_print()
 print "alt_m:", root.sensors.gps[5].alt_m
 
 config = getNode('/', create=True)
-#file = '/home/curt/Source/AuraUAS/aura-data/config/main-skywalker.xml'
+#file = '/home/curt/Source/RiceCreekUAS/rc-config/config/main-skywalker.xml'
 #props_xml.load(file, config)
 #props_xml.save("testing.xml", config)
 #props_json.save("testing.json", config)
 newroot = PropertyNode()
-props_json.load("/home/curt/Source/AuraUAS/aura-data/config/main-skywalker.json", newroot)
+props_json.load("/home/curt/Source/RiceCreekUAS/rc-config/config/main-skywalker.json", newroot)
 print "pretty:"
 newroot.pretty_print()
 quit()

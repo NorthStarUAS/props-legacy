@@ -7,7 +7,7 @@ using std::string;
 
 // This function must be called first (before any other python usage.)
 // It sets up the python intepreter.
-void AuraPythonInit(int argc, char **argv, string extra_module_path) {
+void rcPythonInit(int argc, char **argv, string extra_module_path) {
     wchar_t* program = Py_DecodeLocale(argv[0], NULL);
     Py_SetProgramName(program); // optional but recommended
     Py_Initialize();
@@ -27,6 +27,6 @@ void AuraPythonInit(int argc, char **argv, string extra_module_path) {
 // This function can be called from atexit() (after all the global
 // destructors are called) to properly shutdown and clean up the
 // python interpreter.
-void AuraPythonCleanup(void) {
+void rcPythonCleanup(void) {
     Py_Finalize();
 }

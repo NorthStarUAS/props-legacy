@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
     // destructors are called
     atexit(pyPropsCleanup);
     
-    AuraPythonInit(argc, argv, "");
+    rcPythonInit(argc, argv, "");
     pyPropsInit();
 
     pyPropertyNode root_node = pyGetNode("/", true);

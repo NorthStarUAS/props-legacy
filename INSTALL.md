@@ -1,9 +1,9 @@
 # Quick install instructions
 
     $ cd python
-    $ sudo python3 ./setup.py install
+    $ sudo python3 setup.py install
 
-# To install C++ interface (required for AuraUAS/aura-core)
+# To install C++ interface (required for rcUAS/rc-flight)
 
     $ cd library
     $ ./autogen.sh
