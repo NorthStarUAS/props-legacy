@@ -175,48 +175,62 @@ class PropertyNode:
 
     def getFloat(self, name):
         if name in self.__dict__:
-            return float(self.__dict__[name])
-        else:
-            return 0.0
+            try:
+                return float(self.__dict__[name])
+            except Exception as e:
+                print(str(e))
+        return 0.0
             
     def getInt(self, name):
         if name in self.__dict__:
-            return int(self.__dict__[name])
-        else:
-            return 0
+            try:
+                return int(self.__dict__[name])
+            except Exception as e:
+                print(str(e))
+        return 0
 
     def getBool(self, name):
         if name in self.__dict__:
-            return bool(self.__dict__[name])
-        else:
-            return False
+            try:
+                return bool(self.__dict__[name])
+            except Exception as e:
+                print(str(e))
+        return False
 
     def getString(self, name):
         if name in self.__dict__:
-            return str(self.__dict__[name])
-        else:
-            return ""
+            try:
+                return str(self.__dict__[name])
+            except Exception as e:
+                print(str(e))
+        return ""
 
     def getFloatEnum(self, name, index):
         if name in self.__dict__:
-            self.extendEnumeratedNode(self.__dict__[name], index)
-            return float(self.__dict__[name][index])
-        else:
-            return 0.0
+            try:
+                self.extendEnumeratedNode(self.__dict__[name], index)
+                return float(self.__dict__[name][index])
+            except Exception as e:
+                print(str(e))
+        return 0.0
             
     def getIntEnum(self, name, index):
         if name in self.__dict__:
-            self.extendEnumeratedNode(self.__dict__[name], index)
-            return int(self.__dict__[name][index])
-        else:
-            return 0.0
+            try:
+                self.extendEnumeratedNode(self.__dict__[name], index)
+                return int(self.__dict__[name][index])
+            except Exception as e:
+                print(str(e))
+        return 0
             
     def getStringEnum(self, name, index):
         if name in self.__dict__:
-            self.extendEnumeratedNode(self.__dict__[name], index)
-            return str(self.__dict__[name][index])
-        else:
-            return ""
+            try:
+                self.extendEnumeratedNode(self.__dict__[name], index)
+                return str(self.__dict__[name][index])
+            except:
+                print(str(e))
+        return ""
             
     def setFloat(self, name, val):
         self.__dict__[name] = float(val)
