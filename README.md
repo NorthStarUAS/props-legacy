@@ -1,5 +1,7 @@
 # rc-props
 
+NOTICE: This project has moved to Codeberg.org <https://codeberg.org/NorthStarUAS>
+
 rc-props is a pure python "property tree" system for convenient
 organization and sharing of data between code modules.
 
